@@ -275,5 +275,7 @@ st.caption(
     "⚖️ Proyecto académico de análisis de datos. "
     "No corresponde a resultados oficiales. "
     "Consulte únicamente la Registraduría Nacional del Estado Civil."
+)
+
 
 
