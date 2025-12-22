@@ -22,18 +22,18 @@ st.set_page_config(
     page_icon="🗳️"
 )
 
-# CSS Optimizado
+# CSS Optimizado con Modal
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Exo+2:wght@400;700&display=swap');
     
     .stApp {
-        background: linear-gradient(135deg, #18c7a1 0%, #c24725 50%, #f7eb0a 100%);
+        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
     }
     
     h1 {
         font-family: 'Orbitron', sans-serif !important;
-        color: #0c56eb !important;
+        color: #FFD700 !important;
         text-align: center !important;
         font-size: 3rem !important;
         text-shadow: 0 0 20px rgba(255, 215, 0, 0.5) !important;
@@ -109,29 +109,71 @@ st.markdown("""
         background: linear-gradient(135deg, #FFD700, #FFA500) !important;
         color: black !important;
     }
+    
+    /* Botón especial para iniciar votación */
+    .vote-start-button {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: black;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2rem;
+        font-weight: 900;
+        padding: 40px 60px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 10px 40px rgba(255, 215, 0, 0.5);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        width: 100%;
+        margin: 50px 0;
+    }
+    
+    .vote-start-button:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0 20px 60px rgba(255, 215, 0, 0.8);
+        background: linear-gradient(135deg, #FFA500, #FFD700);
+    }
+    
+    /* Animación de pulso para el botón */
+    @keyframes pulse-glow {
+        0%, 100% {
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.5);
+        }
+        50% {
+            box-shadow: 0 10px 60px rgba(255, 215, 0, 0.9);
+        }
+    }
+    
+    .vote-start-button {
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # Datos
 candidatos = [
-    "Gustavo Petro (hipotético)", "Paloma Valencia", "Iván Cepeda",
+    "Iván Cepeda", "Paloma Valencia", "Gustavo Petro (hipotético)",
     "Sergio Fajardo", "Vicky Dávila", "Abelardo de la Espriella",
-    "David Luna", "Juan Daniel Oviedo", "En blanco"
+    "David Luna", "Juan Daniel Oviedo", "Otro"
 ]
 
-# Inicializar
+# Inicializar estados
 if "datos_votos" not in st.session_state:
     st.session_state.datos_votos = pd.DataFrame(
         columns=["candidato", "votos", "hora", "nombre", "ult5", "departamento"]
     )
 
+if "show_vote_modal" not in st.session_state:
+    st.session_state.show_vote_modal = False
+
 def generar_hash(cedula):
     return hashlib.sha256(cedula.encode()).hexdigest()[:16]
 
 # HEADER
-st.title("🇨🇴 COLOMBIA ARDE 🔥 PETRO - PRESIDENTE 2026 - 2030")
-st.markdown("### Encuesta Electoral Segura, queremos saber su opinion")
-st.markdown("**En esta pagina se haran visibles de manera sistematica todos los que apoyan el progreso del empleado, enfoque actual del gobierno Petro o aquel que guste elegir como presidente**")
+st.title("🇨🇴 VOTO COLOMBIA PRESIDENCIALES 2026")
+st.markdown("### Encuesta Electoral Segura")
+st.markdown("**Creador: Deiber Yesid López Ramírez - Data Analyst**")
 st.markdown("---")
 
 # Enlaces Oficiales
@@ -173,21 +215,21 @@ with col3:
 
 st.markdown("---")
 
-# SIDEBAR - VOTACIÓN
+# SIDEBAR - VOTACIÓN (SIEMPRE VISIBLE)
 with st.sidebar:
     st.header("🗳️ EMITE TU VOTO")
     
-    with st.form("form_voto"):
-        nombre = st.text_input("✍️ Nombre", placeholder="Tu nombre")
+    with st.form("form_voto_sidebar"):
+        nombre = st.text_input("✍️ Nombre", placeholder="Tu nombre", key="nombre_sidebar")
         departamento = st.selectbox("📍 Departamento", [
             "Selecciona...", "Antioquia", "Atlántico", "Bogotá D.C.", 
             "Bolívar", "Boyacá", "Caldas", "Caquetá", "Cauca", "Cesar",
             "Córdoba", "Cundinamarca", "Huila", "La Guajira", "Magdalena",
             "Meta", "Nariño", "Norte de Santander", "Quindío", "Risaralda",
             "Santander", "Sucre", "Tolima", "Valle del Cauca"
-        ])
-        ult5 = st.text_input("🔢 Últimos 5 dígitos cédula", max_chars=5, type="password")
-        candidato = st.selectbox("🎯 Candidato", candidatos)
+        ], key="depto_sidebar")
+        ult5 = st.text_input("🔢 Últimos 5 dígitos cédula", max_chars=5, type="password", key="cedula_sidebar")
+        candidato = st.selectbox("🎯 Candidato", candidatos, key="candidato_sidebar")
         
         submitted = st.form_submit_button("✅ VOTAR AHORA", use_container_width=True)
         
@@ -217,8 +259,212 @@ with st.sidebar:
 
 # CONTENIDO PRINCIPAL
 if st.session_state.datos_votos.empty:
-    st.info("🗳️ **¡Sé el primero en votar!**")
+    # BOTÓN GRANDE PARA INICIAR VOTACIÓN
+    st.markdown("""
+    <div style="text-align: center; padding: 100px 20px;">
+        <div style="
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 80px 40px;
+            border: 3px solid rgba(255, 215, 0, 0.4);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            margin: 0 auto;
+        ">
+            <div style="font-size: 5rem; margin-bottom: 30px;">🗳️</div>
+            <h2 style="
+                font-family: 'Orbitron', sans-serif;
+                color: #FFD700;
+                font-size: 3rem;
+                margin-bottom: 20px;
+                text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            ">¡Inicia la Encuesta Electoral!</h2>
+            <p style="
+                font-family: 'Exo 2', sans-serif;
+                color: #87CEEB;
+                font-size: 1.5rem;
+                margin-bottom: 40px;
+            ">Sé el primero en hacer historia</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Botón centrado
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("🚀 EMITIR MI VOTO AHORA", use_container_width=True, key="btn_iniciar_voto"):
+            st.session_state.show_vote_modal = True
+            st.rerun()
+    
+    # MODAL DE VOTACIÓN EN PANTALLA COMPLETA
+    if st.session_state.show_vote_modal:
+        st.markdown("""
+        <style>
+            /* Overlay de fondo oscuro */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: fadeIn 0.3s ease-out;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            /* Contenedor del formulario */
+            .modal-content {
+                background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+                border-radius: 30px;
+                padding: 60px;
+                max-width: 700px;
+                width: 90%;
+                border: 3px solid #FFD700;
+                box-shadow: 0 30px 100px rgba(255, 215, 0, 0.6);
+                animation: slideInFromBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+            }
+            
+            @keyframes slideInFromBottom {
+                from {
+                    transform: translateY(100vh);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            
+            /* Botón de cerrar */
+            .modal-close {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                background: rgba(255, 50, 50, 0.8);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .modal-close:hover {
+                background: rgba(255, 50, 50, 1);
+                transform: scale(1.1) rotate(90deg);
+            }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        # Contenedor del modal
+        modal_container = st.container()
+        
+        with modal_container:
+            # Columnas para centrar el contenido
+            col_modal1, col_modal2, col_modal3 = st.columns([1, 3, 1])
+            
+            with col_modal2:
+                st.markdown("""
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="
+                        font-family: 'Orbitron', sans-serif;
+                        color: #FFD700;
+                        font-size: 2.5rem;
+                        text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+                    ">🗳️ FORMULARIO DE VOTACIÓN</h2>
+                    <p style="color: #87CEEB; font-size: 1.2rem;">Completa tus datos para emitir tu voto</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Botón de cerrar
+                if st.button("✖️ CERRAR", key="btn_cerrar_modal", use_container_width=True):
+                    st.session_state.show_vote_modal = False
+                    st.rerun()
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+                
+                # FORMULARIO EN EL MODAL
+                with st.form("form_voto_modal"):
+                    nombre_modal = st.text_input(
+                        "✍️ Nombre Completo",
+                        placeholder="Ingresa tu nombre",
+                        key="nombre_modal"
+                    )
+                    
+                    departamento_modal = st.selectbox(
+                        "📍 Departamento",
+                        [
+                            "Selecciona...", "Antioquia", "Atlántico", "Bogotá D.C.", 
+                            "Bolívar", "Boyacá", "Caldas", "Caquetá", "Cauca", "Cesar",
+                            "Córdoba", "Cundinamarca", "Huila", "La Guajira", "Magdalena",
+                            "Meta", "Nariño", "Norte de Santander", "Quindío", "Risaralda",
+                            "Santander", "Sucre", "Tolima", "Valle del Cauca"
+                        ],
+                        key="depto_modal"
+                    )
+                    
+                    ult5_modal = st.text_input(
+                        "🔢 Últimos 5 dígitos de cédula",
+                        placeholder="12345",
+                        max_chars=5,
+                        type="password",
+                        key="cedula_modal"
+                    )
+                    
+                    candidato_modal = st.selectbox(
+                        "🎯 Candidato de tu preferencia",
+                        candidatos,
+                        key="candidato_modal"
+                    )
+                    
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    
+                    submitted_modal = st.form_submit_button(
+                        "✅ CONFIRMAR VOTO",
+                        use_container_width=True
+                    )
+                    
+                    if submitted_modal:
+                        if not nombre_modal or departamento_modal == "Selecciona..." or len(ult5_modal) != 5:
+                            st.error("❌ Completa todos los campos correctamente")
+                        elif not ult5_modal.isdigit():
+                            st.error("❌ La cédula debe contener solo números")
+                        elif ult5_modal in st.session_state.datos_votos["ult5"].values:
+                            st.error("❌ Esta cédula ya votó. Un voto por persona.")
+                        else:
+                            nuevo_voto = pd.DataFrame({
+                                "candidato": [candidato_modal],
+                                "votos": [1],
+                                "hora": [datetime.now()],
+                                "nombre": [nombre_modal],
+                                "ult5": [ult5_modal],
+                                "departamento": [departamento_modal]
+                            })
+                            
+                            st.session_state.datos_votos = pd.concat(
+                                [st.session_state.datos_votos, nuevo_voto],
+                                ignore_index=True
+                            )
+                            
+                            st.success("✅ ¡Voto registrado exitosamente! 🇨🇴")
+                            st.balloons()
+                            st.session_state.show_vote_modal = False
+                            st.rerun()
+
 else:
+    # Resultados cuando hay votos
     resumen = (st.session_state.datos_votos
                .groupby("candidato")["votos"]
                .sum()
@@ -347,9 +593,7 @@ else:
         if len(st.session_state.datos_votos) < 10:
             st.warning("⚠️ Se necesitan al menos 10 votos para realizar análisis de Machine Learning")
         else:
-            # ===============================
-            # DATASET PARA ML
-            # ===============================
+            # Dataset para ML
             cluster_df = (
                 st.session_state.datos_votos
                 .groupby("departamento")
@@ -363,18 +607,14 @@ else:
             st.markdown("### 📋 Variables Analizadas")
             st.dataframe(cluster_df)
             
-            # ===============================
-            # NORMALIZACIÓN
-            # ===============================
+            # Normalización
             scaler = StandardScaler()
             X_scaled = scaler.fit_transform(
                 cluster_df[["total_votos", "diversidad_candidatos"]]
             )
             
-            # ===============================
-            # K-MEANS
-            # ===============================
-            n_clusters = min(3, len(cluster_df))  # Ajustar según datos disponibles
+            # K-Means
+            n_clusters = min(3, len(cluster_df))
             
             kmeans = KMeans(
                 n_clusters=n_clusters,
@@ -388,9 +628,7 @@ else:
                 score = silhouette_score(X_scaled, cluster_df["cluster"])
                 st.metric("📐 Silhouette Score", f"{score:.3f}")
             
-            # ===============================
-            # VISUALIZACIÓN
-            # ===============================
+            # Visualización
             fig_cluster = px.scatter(
                 cluster_df,
                 x="total_votos",
@@ -415,9 +653,7 @@ else:
             
             st.plotly_chart(fig_cluster, use_container_width=True)
             
-            # ===============================
-            # PCA (REDUCCIÓN DIMENSIONAL)
-            # ===============================
+            # PCA
             st.markdown("### 🔬 PCA – Reducción Dimensional")
             
             pca = PCA(n_components=2)
@@ -448,9 +684,7 @@ else:
             
             st.plotly_chart(fig_pca, use_container_width=True)
             
-            # ===============================
-            # INTERPRETACIÓN
-            # ===============================
+            # Interpretación
             st.markdown("""
             ### 🧠 Interpretación Técnica
             
@@ -469,10 +703,3 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
-
-
-
-
-
-
-
