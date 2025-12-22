@@ -1,335 +1,279 @@
+# =========================================================
+# 🇨🇴 VOTO COLOMBIA 2026 - DASHBOARD ANALÍTICO + ML
+# Autor: Deiber Yesid López Ramírez
+# Rol: Data Analyst / Data Science
+# Framework: Streamlit
+# Uso: Académico / Analítico (NO OFICIAL)
+# =========================================================
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 from datetime import datetime
-import hashlib
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
 
-# Configuración básica
+# ---------------------------------------------------------
+# CONFIGURACIÓN GENERAL
+# ---------------------------------------------------------
 st.set_page_config(
-    layout="wide", 
-    page_title="Voto Colombia 2026 🇨🇴", 
-    page_icon="🗳️"
+    page_title="Voto Colombia 2026 🇨🇴",
+    page_icon="🗳️",
+    layout="wide"
 )
 
-# CSS Optimizado
+# ---------------------------------------------------------
+# ESTILOS CSS
+# ---------------------------------------------------------
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Exo+2:wght@400;700&display=swap');
-    
-    .stApp {
-        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-    }
-    
-    h1 {
-        font-family: 'Orbitron', sans-serif !important;
-        color: #FFD700 !important;
-        text-align: center !important;
-        font-size: 3rem !important;
-        text-shadow: 0 0 20px rgba(255, 215, 0, 0.5) !important;
-        animation: glow 2s ease-in-out infinite !important;
-    }
-    
-    @keyframes glow {
-        0%, 100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-        50% { text-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
-    }
-    
-    h2 {
-        font-family: 'Exo 2', sans-serif !important;
-        color: #87CEEB !important;
-        text-align: center !important;
-    }
-    
-    h3 {
-        font-family: 'Orbitron', sans-serif !important;
-        color: #FFD700 !important;
-    }
-    
-    .stButton>button {
-        background: linear-gradient(135deg, #FFD700, #FFA500) !important;
-        color: black !important;
-        font-weight: bold !important;
-        border-radius: 12px !important;
-        padding: 15px 30px !important;
-        font-size: 1.2rem !important;
-        border: none !important;
-        box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4) !important;
-        transition: all 0.3s ease !important;
-    }
-    
-    .stButton>button:hover {
-        transform: translateY(-3px) scale(1.05) !important;
-        box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6) !important;
-    }
-    
-    .card-modern {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 25px;
-        border: 2px solid rgba(255, 215, 0, 0.3);
-        margin: 15px 0;
-        transition: all 0.3s ease;
-    }
-    
-    .card-modern:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
-    }
-    
-    [data-testid="stMetricValue"] {
-        font-size: 2rem !important;
-        color: #FFD700 !important;
-        font-weight: bold !important;
-    }
-    
-    [data-testid="stMetricLabel"] {
-        color: #87CEEB !important;
-        font-size: 1.2rem !important;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        background-color: rgba(45, 55, 72, 0.6) !important;
-        color: #87CEEB !important;
-        border-radius: 10px !important;
-    }
-    
-    .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #FFD700, #FFA500) !important;
-        color: black !important;
-    }
+.stApp {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+}
+h1, h2, h3 {
+    color: #FFD700;
+}
+[data-testid="stMetricValue"] {
+    font-size: 2rem;
+    color: #FFD700;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# Datos
+# ---------------------------------------------------------
+# DATOS INICIALES
+# ---------------------------------------------------------
 candidatos = [
-    "Iván Cepeda", "Paloma Valencia", "Gustavo Petro (hipotético)",
-    "Sergio Fajardo", "Vicky Dávila", "Abelardo de la Espriella",
-    "David Luna", "Juan Daniel Oviedo", "Otro"
+    "Iván Cepeda",
+    "Paloma Valencia",
+    "Sergio Fajardo",
+    "Vicky Dávila",
+    "Juan Daniel Oviedo",
+    "David Luna",
+    "Voto en Blanco",
+    "Otro"
 ]
 
-# Inicializar
 if "datos_votos" not in st.session_state:
     st.session_state.datos_votos = pd.DataFrame(
-        columns=["candidato", "votos", "hora", "nombre", "ult5", "departamento"]
+        columns=["nombre", "departamento", "candidato", "hora"]
     )
 
-def generar_hash(cedula):
-    return hashlib.sha256(cedula.encode()).hexdigest()[:16]
-
+# ---------------------------------------------------------
 # HEADER
-st.title("🇨🇴 VOTO COLOMBIA PRESIDENCIALES 2026")
-st.markdown("### Encuesta Electoral Segura")
-st.markdown("**Creador: Deiber Yesid López Ramírez - Data Analyst**")
-st.markdown("---")
+# ---------------------------------------------------------
+st.title("🇨🇴 ELECCIONES PRESIDENCIALES 2026")
+st.markdown("### Dashboard Analítico y Académico")
+st.markdown("**Autor:** Deiber Yesid López Ramírez – Data Analyst")
+st.divider()
 
-# Enlaces Oficiales
-st.markdown("### 📊 FUENTES OFICIALES DE ELECCIONES")
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.markdown("""
-    <div class="card-modern">
-        <h4 style="color: #FFD700; text-align: center;">🏛️ Registraduría</h4>
-        <p style="text-align: center;">
-            <a href="https://estadisticaselectorales.registraduria.gov.co/" target="_blank" 
-               style="color: #FFD700; text-decoration: none;">📈 Ver Estadísticas</a>
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col2:
-    st.markdown("""
-    <div class="card-modern">
-        <h4 style="color: #FFD700; text-align: center;">👁️ MOE</h4>
-        <p style="text-align: center;">
-            <a href="https://moe.org.co/" target="_blank" 
-               style="color: #FFD700; text-decoration: none;">🔍 Portal MOE</a>
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col3:
-    st.markdown("""
-    <div class="card-modern">
-        <h4 style="color: #FFD700; text-align: center;">📚 CEDAE</h4>
-        <p style="text-align: center;">
-            <a href="https://cedae.datasketch.co/" target="_blank" 
-               style="color: #FFD700; text-decoration: none;">💾 Base de Datos</a>
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("---")
-
-# SIDEBAR - VOTACIÓN
+# ---------------------------------------------------------
+# SIDEBAR - REGISTRO DE VOTO (SIMULADO)
+# ---------------------------------------------------------
 with st.sidebar:
-    st.header("🗳️ EMITE TU VOTO")
-    
+    st.header("🗳️ Registro de Voto (Simulación)")
+
     with st.form("form_voto"):
-        nombre = st.text_input("✍️ Nombre", placeholder="Tu nombre")
-        departamento = st.selectbox("📍 Departamento", [
-            "Selecciona...", "Antioquia", "Atlántico", "Bogotá D.C.", 
-            "Bolívar", "Boyacá", "Caldas", "Caquetá", "Cauca", "Cesar",
-            "Córdoba", "Cundinamarca", "Huila", "La Guajira", "Magdalena",
-            "Meta", "Nariño", "Norte de Santander", "Quindío", "Risaralda",
-            "Santander", "Sucre", "Tolima", "Valle del Cauca"
-        ])
-        ult5 = st.text_input("🔢 Últimos 5 dígitos cédula", max_chars=5, type="password")
-        candidato = st.selectbox("🎯 Candidato", candidatos)
-        
-        submitted = st.form_submit_button("✅ VOTAR AHORA", use_container_width=True)
-        
-        if submitted:
-            if not nombre or departamento == "Selecciona..." or len(ult5) != 5:
-                st.error("❌ Completa todos los campos correctamente")
-            elif ult5 in st.session_state.datos_votos["ult5"].values:
-                st.error("❌ Esta cédula ya votó")
+        nombre = st.text_input("Nombre")
+        departamento = st.selectbox(
+            "Departamento",
+            [
+                "Antioquia", "Atlántico", "Bogotá D.C.", "Bolívar",
+                "Boyacá", "Caldas", "Cauca", "Cesar",
+                "Córdoba", "Cundinamarca", "Huila",
+                "La Guajira", "Magdalena", "Meta",
+                "Nariño", "Norte de Santander",
+                "Risaralda", "Santander",
+                "Tolima", "Valle del Cauca"
+            ]
+        )
+        candidato = st.selectbox("Candidato", candidatos)
+
+        enviar = st.form_submit_button("Registrar voto")
+
+        if enviar:
+            if nombre.strip() == "":
+                st.error("Debe ingresar nombre")
             else:
                 nuevo = pd.DataFrame({
-                    "candidato": [candidato],
-                    "votos": [1],
-                    "hora": [datetime.now()],
                     "nombre": [nombre],
-                    "ult5": [ult5],
-                    "departamento": [departamento]
+                    "departamento": [departamento],
+                    "candidato": [candidato],
+                    "hora": [datetime.now()]
                 })
                 st.session_state.datos_votos = pd.concat(
-                    [st.session_state.datos_votos, nuevo], ignore_index=True
+                    [st.session_state.datos_votos, nuevo],
+                    ignore_index=True
                 )
-                st.success("✅ ¡Voto registrado! 🇨🇴")
-                st.balloons()
+                st.success("Voto registrado (simulación)")
                 st.rerun()
-    
-    st.divider()
-    st.metric("📊 Total Votos", len(st.session_state.datos_votos))
 
-# CONTENIDO PRINCIPAL
+# ---------------------------------------------------------
+# VALIDACIÓN
+# ---------------------------------------------------------
 if st.session_state.datos_votos.empty:
-    st.info("🗳️ **¡Sé el primero en votar!**")
-else:
-    resumen = (st.session_state.datos_votos
-               .groupby("candidato")["votos"]
-               .sum()
-               .reset_index()
-               .sort_values("votos", ascending=False))
-    total = resumen["votos"].sum()
-    resumen["porcentaje"] = (resumen["votos"] / total * 100).round(2)
-    
-    # Tabs
-    tab1, tab2, tab3 = st.tabs(["📊 RESULTADOS", "📈 ANÁLISIS", "📋 DATOS"])
-    
-    with tab1:
-        # Métricas
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.metric("🥇 LÍDER", resumen.iloc[0]["candidato"], f"{resumen.iloc[0]['porcentaje']}%")
-        with col2:
-            st.metric("📊 TOTAL", total)
-        with col3:
-            if len(resumen) > 1:
-                dif = resumen.iloc[0]["porcentaje"] - resumen.iloc[1]["porcentaje"]
-                st.metric("📉 DIFERENCIA", f"{dif:.1f}%")
-        with col4:
-            deptos = st.session_state.datos_votos["departamento"].nunique()
-            st.metric("🗺️ DEPARTAMENTOS", deptos)
-        
-        st.markdown("---")
-        
-        # Gráficos
-        col_l, col_r = st.columns(2)
-        
-        with col_l:
-            st.subheader("🏆 RANKING")
-            for idx, row in resumen.iterrows():
-                st.write(f"**#{idx+1} {row['candidato']}** - {row['porcentaje']}%")
-                st.progress(row['porcentaje']/100)
-                st.caption(f"{row['votos']} votos")
-        
-        with col_r:
-            st.subheader("📊 DISTRIBUCIÓN")
-            fig = px.pie(
-                resumen, 
-                values='votos', 
-                names='candidato',
-                hole=0.5,
-                color_discrete_sequence=px.colors.sequential.Sunset
-            )
-            fig.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='white')
-            )
-            st.plotly_chart(fig, use_container_width=True)
-    
-    with tab2:
-        st.subheader("📈 COMPARATIVA")
-        fig_bar = px.bar(
-            resumen,
-            x='votos',
-            y='candidato',
-            orientation='h',
-            color='porcentaje',
-            color_continuous_scale='Sunset',
-            text='porcentaje'
-        )
-        fig_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
-        fig_bar.update_layout(
-            yaxis={'categoryorder':'total ascending'},
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
-            font=dict(color='white'),
-            showlegend=False
-        )
-        st.plotly_chart(fig_bar, use_container_width=True)
-        
-        # Por departamento
-        if len(st.session_state.datos_votos) > 0:
-            st.subheader("🗺️ POR DEPARTAMENTO")
-            votos_depto = (st.session_state.datos_votos
-                          .groupby('departamento')
-                          .size()
-                          .reset_index(name='votos')
-                          .sort_values('votos', ascending=False)
-                          .head(10))
-            
-            fig_dep = px.bar(
-                votos_depto,
-                x='votos',
-                y='departamento',
-                orientation='h',
-                color='votos',
-                color_continuous_scale='Tealgrn'
-            )
-            fig_dep.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='white'),
-                showlegend=False
-            )
-            st.plotly_chart(fig_dep, use_container_width=True)
-    
-    with tab3:
-        st.subheader("📋 DATOS DE VOTACIÓN")
-        datos_mostrar = st.session_state.datos_votos[['nombre', 'candidato', 'departamento', 'hora']].copy()
-        datos_mostrar['hora'] = datos_mostrar['hora'].dt.strftime('%Y-%m-%d %H:%M:%S')
-        st.dataframe(datos_mostrar, use_container_width=True)
-        
-        # Descarga
-        csv = datos_mostrar.to_csv(index=False).encode('utf-8')
-        st.download_button(
-            "📥 Descargar CSV",
-            data=csv,
-            file_name=f'votos_{datetime.now().strftime("%Y%m%d")}.csv',
-            mime='text/csv'
-        )
+    st.info("No hay votos registrados aún.")
+    st.stop()
 
-# Footer
-st.markdown("---")
-st.markdown("""
-<div style="text-align: center; color: #87CEEB; padding: 20px;">
-    <p><b>✨ Desarrollado por Deiber Yesid López Ramírez - Data Analyst</b></p>
-    <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
-</div>
-""", unsafe_allow_html=True)
+# ---------------------------------------------------------
+# RESUMEN GENERAL
+# ---------------------------------------------------------
+df = st.session_state.datos_votos.copy()
+
+resumen = (
+    df.groupby("candidato")
+    .size()
+    .reset_index(name="votos")
+    .sort_values("votos", ascending=False)
+)
+
+total_votos = resumen["votos"].sum()
+resumen["porcentaje"] = (resumen["votos"] / total_votos * 100).round(2)
+
+# ---------------------------------------------------------
+# KPIs INSTITUCIONALES
+# ---------------------------------------------------------
+st.subheader("📊 Resumen Nacional")
+
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric("🗳️ Total Votos", total_votos)
+col2.metric("🏆 Candidato Líder", resumen.iloc[0]["candidato"])
+if len(resumen) > 1:
+    dif = resumen.iloc[0]["porcentaje"] - resumen.iloc[1]["porcentaje"]
+else:
+    dif = 0
+col3.metric("📈 Diferencia", f"{dif:.2f}%")
+col4.metric("🗺️ Deptos", df["departamento"].nunique())
+
+st.divider()
+
+# ---------------------------------------------------------
+# TABS PRINCIPALES
+# ---------------------------------------------------------
+tab1, tab2, tab3 = st.tabs([
+    "📊 Resultados",
+    "📈 Visualización",
+    "🧠 Machine Learning"
+])
+
+# ---------------------------------------------------------
+# TAB 1 - RESULTADOS
+# ---------------------------------------------------------
+with tab1:
+    st.subheader("Resultados Nacionales")
+
+    fig_bar = px.bar(
+        resumen,
+        x="candidato",
+        y="porcentaje",
+        text="porcentaje",
+        color="candidato"
+    )
+    fig_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
+    fig_bar.update_layout(
+        showlegend=False,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
+    )
+    st.plotly_chart(fig_bar, use_container_width=True)
+
+    fig_pie = px.pie(
+        resumen,
+        names="candidato",
+        values="votos",
+        hole=0.4
+    )
+    fig_pie.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)"
+    )
+    st.plotly_chart(fig_pie, use_container_width=True)
+
+# ---------------------------------------------------------
+# TAB 2 - VISUALIZACIÓN TERRITORIAL
+# ---------------------------------------------------------
+with tab2:
+    st.subheader("Participación por Departamento")
+
+    votos_depto = (
+        df.groupby("departamento")
+        .size()
+        .reset_index(name="votos")
+        .sort_values("votos", ascending=False)
+    )
+
+    fig_dep = px.bar(
+        votos_depto,
+        x="votos",
+        y="departamento",
+        orientation="h",
+        color="votos",
+        color_continuous_scale="Viridis"
+    )
+    fig_dep.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        showlegend=False
+    )
+    st.plotly_chart(fig_dep, use_container_width=True)
+
+# ---------------------------------------------------------
+# TAB 3 - MACHINE LEARNING (CLUSTERING)
+# ---------------------------------------------------------
+with tab3:
+    st.subheader("🧠 Clustering Electoral (K-Means)")
+
+    cluster_df = (
+        df.groupby("departamento")
+        .agg(
+            total_votos=("candidato", "count"),
+            diversidad=("candidato", "nunique")
+        )
+        .reset_index()
+    )
+
+    scaler = StandardScaler()
+    X = scaler.fit_transform(
+        cluster_df[["total_votos", "diversidad"]]
+    )
+
+    kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+    cluster_df["cluster"] = kmeans.fit_predict(X)
+
+    fig_cluster = px.scatter(
+        cluster_df,
+        x="total_votos",
+        y="diversidad",
+        color="cluster",
+        text="departamento",
+        size="total_votos",
+        color_continuous_scale="Turbo"
+    )
+
+    fig_cluster.update_traces(textposition="top center")
+    fig_cluster.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
+    )
+
+    st.plotly_chart(fig_cluster, use_container_width=True)
+
+    st.markdown("""
+    **Interpretación académica:**
+    - Cluster 0: Baja participación
+    - Cluster 1: Participación media
+    - Cluster 2: Alta participación y diversidad
+
+    ⚖️ *Análisis estadístico no predictivo*
+    """)
+
+# ---------------------------------------------------------
+# FOOTER LEGAL
+# ---------------------------------------------------------
+st.divider()
+st.caption(
+    "⚖️ Proyecto académico de análisis de datos. "
+    "No corresponde a resultados oficiales. "
+    "Consulte únicamente la Registraduría Nacional del Estado Civil."
+
+
