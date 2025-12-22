@@ -1,3 +1,5 @@
+CODIGO BASE "VOTOCOLOMBIA2026"
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -9,6 +11,7 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
+
 
 
 # Configuración básica
@@ -223,13 +226,12 @@ else:
     total = resumen["votos"].sum()
     resumen["porcentaje"] = (resumen["votos"] / total * 100).round(2)
     
-    # Tabs
     tab1, tab2, tab3, tab4 = st.tabs([
     "📊 RESULTADOS",
     "📈 ANÁLISIS",
     "📋 DATOS",
     "🧠 MACHINE LEARNING"
-    ])
+])
     
     with tab1:
         # Métricas
@@ -326,10 +328,18 @@ else:
         datos_mostrar = st.session_state.datos_votos[['nombre', 'candidato', 'departamento', 'hora']].copy()
         datos_mostrar['hora'] = datos_mostrar['hora'].dt.strftime('%Y-%m-%d %H:%M:%S')
         st.dataframe(datos_mostrar, use_container_width=True)
+        
+        # Descarga
+        csv = datos_mostrar.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            "📥 Descargar CSV",
+            data=csv,
+            file_name=f'votos_{datetime.now().strftime("%Y%m%d")}.csv',
+            mime='text/csv'
+        )
 
-    with tab4:
-        with tab4:
-             st.subheader("🧠 Análisis Avanzado con Machine Learning")
+with tab4:
+    st.subheader("🧠 Análisis Avanzado con Machine Learning")
 
     # ===============================
     # DATASET PARA ML
@@ -442,6 +452,7 @@ else:
     🔍 *Análisis estadístico no predictivo, con fines académicos.*
     """)
 
+
 # Footer
 st.markdown("---")
 st.markdown("""
@@ -450,8 +461,3 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
-
-
-
-
-
