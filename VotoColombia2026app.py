@@ -131,7 +131,7 @@ def generar_hash(cedula):
 # HEADER
 st.title("🇨🇴 COLOMBIA ARDE 🔥 PETRO - PRESIDENTE 2026 - 2030")
 st.markdown("### Encuesta Electoral Segura, queremos saber su opinion")
-st.markdown("**En esta pagina se haran visibles de manera sistematica todos los que apoyan el progreso del empleado, enfoque actual del gobierno Petro**")
+st.markdown("**En esta pagina se haran visibles de manera sistematica todos los que apoyan el progreso del empleado, enfoque actual del gobierno Petro o aquel que guste elegir como presidente**")
 st.markdown("---")
 
 # Enlaces Oficiales
@@ -469,6 +469,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
