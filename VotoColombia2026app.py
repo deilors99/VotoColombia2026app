@@ -12,14 +12,10 @@ st.set_page_config(
     page_icon="🗳️"
 )
 
-# CSS Optimizado (SIN ERRORES)
+# CSS Optimizado
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Exo+2:wght@400;700&display=swap');
-    
-    .main {
-        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-    }
     
     .stApp {
         background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
@@ -63,7 +59,7 @@ st.markdown("""
     }
     
     .stButton>button:hover {
-        transform: translateY(-3px) !important;
+        transform: translateY(-3px) scale(1.05) !important;
         box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6) !important;
     }
     
@@ -74,6 +70,12 @@ st.markdown("""
         padding: 25px;
         border: 2px solid rgba(255, 215, 0, 0.3);
         margin: 15px 0;
+        transition: all 0.3s ease;
+    }
+    
+    .card-modern:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
     }
     
     [data-testid="stMetricValue"] {
@@ -85,6 +87,17 @@ st.markdown("""
     [data-testid="stMetricLabel"] {
         color: #87CEEB !important;
         font-size: 1.2rem !important;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        background-color: rgba(45, 55, 72, 0.6) !important;
+        color: #87CEEB !important;
+        border-radius: 10px !important;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+        color: black !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -204,63 +217,113 @@ else:
     total = resumen["votos"].sum()
     resumen["porcentaje"] = (resumen["votos"] / total * 100).round(2)
     
-    # Métricas
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("🥇 LÍDER", resumen.iloc[0]["candidato"], f"{resumen.iloc[0]['porcentaje']}%")
-    with col2:
-        st.metric("📊 TOTAL", total)
-    with col3:
-        if len(resumen) > 1:
-            dif = resumen.iloc[0]["porcentaje"] - resumen.iloc[1]["porcentaje"]
-            st.metric("📉 DIFERENCIA", f"{dif:.1f}%")
-    with col4:
-        deptos = st.session_state.datos_votos["departamento"].nunique()
-        st.metric("🗺️ DEPARTAMENTOS", deptos)
+    # Tabs
+    tab1, tab2, tab3 = st.tabs(["📊 RESULTADOS", "📈 ANÁLISIS", "📋 DATOS"])
     
-    st.markdown("---")
+    with tab1:
+        # Métricas
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("🥇 LÍDER", resumen.iloc[0]["candidato"], f"{resumen.iloc[0]['porcentaje']}%")
+        with col2:
+            st.metric("📊 TOTAL", total)
+        with col3:
+            if len(resumen) > 1:
+                dif = resumen.iloc[0]["porcentaje"] - resumen.iloc[1]["porcentaje"]
+                st.metric("📉 DIFERENCIA", f"{dif:.1f}%")
+        with col4:
+            deptos = st.session_state.datos_votos["departamento"].nunique()
+            st.metric("🗺️ DEPARTAMENTOS", deptos)
+        
+        st.markdown("---")
+        
+        # Gráficos
+        col_l, col_r = st.columns(2)
+        
+        with col_l:
+            st.subheader("🏆 RANKING")
+            for idx, row in resumen.iterrows():
+                st.write(f"**#{idx+1} {row['candidato']}** - {row['porcentaje']}%")
+                st.progress(row['porcentaje']/100)
+                st.caption(f"{row['votos']} votos")
+        
+        with col_r:
+            st.subheader("📊 DISTRIBUCIÓN")
+            fig = px.pie(
+                resumen, 
+                values='votos', 
+                names='candidato',
+                hole=0.5,
+                color_discrete_sequence=px.colors.sequential.Sunset
+            )
+            fig.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='white')
+            )
+            st.plotly_chart(fig, use_container_width=True)
     
-    # Gráficos
-    col_l, col_r = st.columns(2)
-    
-    with col_l:
-        st.subheader("🏆 RANKING")
-        for idx, row in resumen.iterrows():
-            st.write(f"**#{idx+1} {row['candidato']}** - {row['porcentaje']}%")
-            st.progress(row['porcentaje']/100)
-            st.caption(f"{row['votos']} votos")
-    
-    with col_r:
-        st.subheader("📊 DISTRIBUCIÓN")
-        fig = px.pie(
-            resumen, 
-            values='votos', 
-            names='candidato',
-            hole=0.5,
-            color_discrete_sequence=px.colors.sequential.Sunset
+    with tab2:
+        st.subheader("📈 COMPARATIVA")
+        fig_bar = px.bar(
+            resumen,
+            x='votos',
+            y='candidato',
+            orientation='h',
+            color='porcentaje',
+            color_continuous_scale='Sunset',
+            text='porcentaje'
         )
-        fig.update_layout(
+        fig_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
+        fig_bar.update_layout(
+            yaxis={'categoryorder':'total ascending'},
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
-            font=dict(color='white')
+            font=dict(color='white'),
+            showlegend=False
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig_bar, use_container_width=True)
+        
+        # Por departamento
+        if len(st.session_state.datos_votos) > 0:
+            st.subheader("🗺️ POR DEPARTAMENTO")
+            votos_depto = (st.session_state.datos_votos
+                          .groupby('departamento')
+                          .size()
+                          .reset_index(name='votos')
+                          .sort_values('votos', ascending=False)
+                          .head(10))
+            
+            fig_dep = px.bar(
+                votos_depto,
+                x='votos',
+                y='departamento',
+                orientation='h',
+                color='votos',
+                color_continuous_scale='Tealgrn'
+            )
+            fig_dep.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='white'),
+                showlegend=False
+            )
+            st.plotly_chart(fig_dep, use_container_width=True)
     
-    # Tabla de datos
-    st.markdown("---")
-    st.subheader("📋 DATOS DE VOTACIÓN")
-    datos_mostrar = st.session_state.datos_votos[['nombre', 'candidato', 'departamento', 'hora']].copy()
-    datos_mostrar['hora'] = datos_mostrar['hora'].dt.strftime('%Y-%m-%d %H:%M:%S')
-    st.dataframe(datos_mostrar, use_container_width=True)
-    
-    # Descarga
-    csv = datos_mostrar.to_csv(index=False).encode('utf-8')
-    st.download_button(
-        "📥 Descargar CSV",
-        data=csv,
-        file_name=f'votos_{datetime.now().strftime("%Y%m%d")}.csv',
-        mime='text/csv'
-    )
+    with tab3:
+        st.subheader("📋 DATOS DE VOTACIÓN")
+        datos_mostrar = st.session_state.datos_votos[['nombre', 'candidato', 'departamento', 'hora']].copy()
+        datos_mostrar['hora'] = datos_mostrar['hora'].dt.strftime('%Y-%m-%d %H:%M:%S')
+        st.dataframe(datos_mostrar, use_container_width=True)
+        
+        # Descarga
+        csv = datos_mostrar.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            "📥 Descargar CSV",
+            data=csv,
+            file_name=f'votos_{datetime.now().strftime("%Y%m%d")}.csv',
+            mime='text/csv'
+        )
 
 # Footer
 st.markdown("---")
