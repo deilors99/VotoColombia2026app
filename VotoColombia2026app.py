@@ -5,6 +5,12 @@ import plotly.graph_objects as go
 from datetime import datetime
 import hashlib
 
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.metrics import silhouette_score
+
+
 # Configuración básica
 st.set_page_config(
     layout="wide", 
@@ -218,7 +224,12 @@ else:
     resumen["porcentaje"] = (resumen["votos"] / total * 100).round(2)
     
     # Tabs
-    tab1, tab2, tab3 = st.tabs(["📊 RESULTADOS", "📈 ANÁLISIS", "📋 DATOS"])
+    tab1, tab2, tab3, tab4 = st.tabs([
+    "📊 RESULTADOS",
+    "📈 ANÁLISIS",
+    "📋 DATOS",
+    "🧠 MACHINE LEARNING"
+    ])
     
     with tab1:
         # Métricas
@@ -315,7 +326,121 @@ else:
         datos_mostrar = st.session_state.datos_votos[['nombre', 'candidato', 'departamento', 'hora']].copy()
         datos_mostrar['hora'] = datos_mostrar['hora'].dt.strftime('%Y-%m-%d %H:%M:%S')
         st.dataframe(datos_mostrar, use_container_width=True)
-        
+
+    with tab4:
+    st.subheader("🧠 Análisis Avanzado con Machine Learning")
+
+    # ===============================
+    # DATASET PARA ML
+    # ===============================
+    cluster_df = (
+        st.session_state.datos_votos
+        .groupby("departamento")
+        .agg(
+            total_votos=("candidato", "count"),
+            diversidad_candidatos=("candidato", "nunique")
+        )
+        .reset_index()
+    )
+
+    st.markdown("### 📋 Variables Analizadas")
+    st.dataframe(cluster_df)
+
+    # ===============================
+    # NORMALIZACIÓN
+    # ===============================
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(
+        cluster_df[["total_votos", "diversidad_candidatos"]]
+    )
+
+    # ===============================
+    # K-MEANS
+    # ===============================
+    kmeans = KMeans(
+        n_clusters=3,
+        random_state=42,
+        n_init=10
+    )
+    cluster_df["cluster"] = kmeans.fit_predict(X_scaled)
+
+    # Métrica de calidad
+    score = silhouette_score(X_scaled, cluster_df["cluster"])
+
+    st.metric("📐 Silhouette Score", f"{score:.3f}")
+
+    # ===============================
+    # VISUALIZACIÓN
+    # ===============================
+    fig_cluster = px.scatter(
+        cluster_df,
+        x="total_votos",
+        y="diversidad_candidatos",
+        color="cluster",
+        text="departamento",
+        size="total_votos",
+        color_continuous_scale="Viridis",
+        labels={
+            "total_votos": "Total de votos",
+            "diversidad_candidatos": "Diversidad de candidatos"
+        }
+    )
+
+    fig_cluster.update_traces(textposition="top center")
+    fig_cluster.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="white")
+    )
+
+    st.plotly_chart(fig_cluster, use_container_width=True)
+
+    # ===============================
+    # PCA (REDUCCIÓN DIMENSIONAL)
+    # ===============================
+    st.markdown("### 🔬 PCA – Reducción Dimensional")
+
+    pca = PCA(n_components=2)
+    pca_result = pca.fit_transform(X_scaled)
+
+    pca_df = pd.DataFrame(
+        pca_result,
+        columns=["PC1", "PC2"]
+    )
+    pca_df["departamento"] = cluster_df["departamento"]
+    pca_df["cluster"] = cluster_df["cluster"]
+
+    fig_pca = px.scatter(
+        pca_df,
+        x="PC1",
+        y="PC2",
+        color="cluster",
+        text="departamento",
+        title="Proyección PCA de Clusters Electorales"
+    )
+
+    fig_pca.update_traces(textposition="top center")
+    fig_pca.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="white")
+    )
+
+    st.plotly_chart(fig_pca, use_container_width=True)
+
+    # ===============================
+    # INTERPRETACIÓN
+    # ===============================
+    st.markdown("""
+    ### 🧠 Interpretación Técnica
+
+    - **Cluster 0**: Departamentos con baja participación electoral  
+    - **Cluster 1**: Comportamiento mixto y transición  
+    - **Cluster 2**: Alta participación y pluralidad política  
+
+    🔍 *Análisis estadístico no predictivo, con fines académicos.*
+    """)
+    
         # Descarga
         csv = datos_mostrar.to_csv(index=False).encode('utf-8')
         st.download_button(
@@ -333,6 +458,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
