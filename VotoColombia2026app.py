@@ -328,7 +328,8 @@ else:
         st.dataframe(datos_mostrar, use_container_width=True)
 
     with tab4:
-    st.subheader("🧠 Análisis Avanzado con Machine Learning")
+        with tab4:
+             st.subheader("🧠 Análisis Avanzado con Machine Learning")
 
     # ===============================
     # DATASET PARA ML
@@ -440,15 +441,6 @@ else:
 
     🔍 *Análisis estadístico no predictivo, con fines académicos.*
     """)
-    
-        # Descarga
-        csv = datos_mostrar.to_csv(index=False).encode('utf-8')
-        st.download_button(
-            "📥 Descargar CSV",
-            data=csv,
-            file_name=f'votos_{datetime.now().strftime("%Y%m%d")}.csv',
-            mime='text/csv'
-        )
 
 # Footer
 st.markdown("---")
@@ -458,6 +450,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
