@@ -33,7 +33,7 @@ st.markdown("""
     
     h1 {
         font-family: 'Orbitron', sans-serif !important;
-        color: #FFD700 !important;
+        color: #0c56eb !important;
         text-align: center !important;
         font-size: 3rem !important;
         text-shadow: 0 0 20px rgba(255, 215, 0, 0.5) !important;
@@ -469,6 +469,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
