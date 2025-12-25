@@ -512,9 +512,11 @@ def generar_hash(cedula):
     return hashlib.sha256(cedula.encode()).hexdigest()[:16]
 
 # HEADER
-st.title("🇨🇴 Elecciones Colombia 2026")
-st.markdown("### Encuesta Electoral Segura")
+st.title("Elecciones Colombia 2026")
+st.markdown("### Analisis Electoral Seguro")
+st.markdown("**Vote por el candidato presidencial de su eleccion para un próximo periodo**")
 st.markdown("**Vote si hipotéticamente GUSTAVO PETRO fuera candidato electo, nos gustaría saber quiénes apoyan al actual presidente para un próximo periodo**")
+
 st.markdown("---")
 
 # Enlaces Oficiales
@@ -955,6 +957,7 @@ st.markdown("""
     <p style="text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);"><b> Encuesta no oficial • Consulta fuentes oficiales arriba</b></p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
