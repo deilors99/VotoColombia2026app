@@ -764,13 +764,3 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
-```
-
-## 📁 Estructura de carpetas requerida:
-```
-VotoColombia2026/
-├── VotoColombia2026app.py  (este código)
-└── imagenes/
-    ├── bandera_colombia.png
-    ├── gustavo_petro.png
-    └── colombia_arde_cibervoto.png
