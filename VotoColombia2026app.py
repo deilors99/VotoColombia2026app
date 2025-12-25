@@ -954,7 +954,8 @@ st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #FFFFFF; padding: 20px;">
     <p style="font-size: 1.2rem; text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);"><b>✨ Desarrollado por Deiber Yesid López Ramírez - Student Data Analyst</b></p>
-    <p style="text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);">🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
+    <p style="text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);" Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
