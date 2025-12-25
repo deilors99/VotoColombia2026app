@@ -2,39 +2,33 @@
 # VOTO COLOMBIA 2026 - Sistema de Encuesta Electoral
 # Creador: Deiber Yesid López Ramírez
 # ============================================
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 from datetime import datetime
 import hashlib
-
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
-
 # ================= CONFIG =================
 st.set_page_config(
     layout="wide",
     page_title="🇨🇴 Elecciones Colombia 2026",
     page_icon="🇨🇴"
 )
-
 # ================= CSS =================
 st.markdown("""
 <style>
 .stApp {
     background: none;
 }
-
 .background-carousel {
     position: fixed;
     inset: 0;
     z-index: -1;
     overflow: hidden;
 }
-
 .background-carousel img {
     position: absolute;
     width: 100%;
@@ -43,18 +37,15 @@ st.markdown("""
     opacity: 0;
     animation: carousel 24s infinite;
 }
-
 .background-carousel img:nth-child(1){animation-delay:0s;}
 .background-carousel img:nth-child(2){animation-delay:8s;}
 .background-carousel img:nth-child(3){animation-delay:16s;}
-
 @keyframes carousel {
     0%{opacity:0;}
     10%{opacity:1;}
     30%{opacity:1;}
     40%{opacity:0;}
 }
-
 .stApp::after{
     content:'';
     position:fixed;
@@ -64,7 +55,6 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
-
 # ================= CARRUSEL =================
 st.markdown("""
 <div class="background-carousel">
@@ -73,7 +63,6 @@ st.markdown("""
     <img src="imagenes/elecciones.jpg">
 </div>
 """, unsafe_allow_html=True)
-
 # ================= DATA =================
 candidatos = [
     "Gustavo Petro (hipotético)",
@@ -83,21 +72,17 @@ candidatos = [
     "Vicky Dávila",
     "Otro"
 ]
-
 if "datos_votos" not in st.session_state:
     st.session_state.datos_votos = pd.DataFrame(
         columns=["candidato","hora","nombre","ult5","departamento"]
     )
-
 # ================= HEADER =================
 st.title("Elecciones Colombia 2026")
 st.markdown("### Análisis electoral hipotético")
 st.markdown("---")
-
 # ================= SIDEBAR =================
 with st.sidebar:
     st.header("🗳️ Emitir voto")
-
     with st.form("voto"):
         nombre = st.text_input("Nombre")
         departamento = st.selectbox("Departamento", [
@@ -105,9 +90,7 @@ with st.sidebar:
         ])
         ult5 = st.text_input("Últimos 5 dígitos cédula", max_chars=5, type="password")
         candidato = st.selectbox("Candidato", candidatos)
-
         enviar = st.form_submit_button("Votar")
-
         if enviar:
             if not nombre or departamento=="Selecciona..." or len(ult5)!=5:
                 st.error("Datos incompletos")
@@ -120,7 +103,6 @@ with st.sidebar:
                 st.success("Voto registrado 🇨🇴")
                 st.balloons()
                 st.rerun()
-
 # ================= RESULTADOS =================
 if not st.session_state.datos_votos.empty:
     resumen = (
@@ -129,7 +111,6 @@ if not st.session_state.datos_votos.empty:
         .size()
         .reset_index(name="votos")
     )
-
     fig = px.pie(
         resumen,
         values="votos",
@@ -141,7 +122,6 @@ if not st.session_state.datos_votos.empty:
         font=dict(color="white")
     )
     st.plotly_chart(fig, use_container_width=True)
-
 # ================= FOOTER =================
 st.markdown("---")
 st.markdown("""
@@ -149,4 +129,4 @@ st.markdown("""
 <b>Desarrollado por Deiber Yesid López Ramírez</b><br>
 Encuesta académica – No oficial
 </p>
-""", unsafe_allow_html=True)
+""", unsafe_allow_html=True)  reemplaza por un emogi este elemento <span color="rgba(49, 51, 63, 0.6)" data-testid="stIconMaterial" translate="no" class="st-emotion-cache-pd6qx2 ejhh0er0">keyboard_double_arrow_right</span>
