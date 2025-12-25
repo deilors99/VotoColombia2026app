@@ -186,9 +186,9 @@ st.markdown("""
 
 st.markdown("""
 <div class="background-carousel">
-    <img src="imágenes/bandera_colombia.png">
-    <img src="imágenes/gustavo_petro.png">
-    <img src="imágenes/colombia_arde_cibervoto.png">
+    <img src="https://images.unsplash.com/photo-1581090700227-1e37b190418e">
+    <img src="https://images.unsplash.com/photo-1541873676-a18131494184">
+    <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620">
 ">
 </div>
 """, unsafe_allow_html=True)
@@ -746,6 +746,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
