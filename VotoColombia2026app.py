@@ -9,6 +9,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 import hashlib
+import base64
+import os
 
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
@@ -183,11 +185,6 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
-st.markdown("""
-
-import base64
-import os
 
 # Función para convertir imagen a base64
 def get_base64_image(image_path):
@@ -767,12 +764,13 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+```
 
-
-
-
-
-
-
-
-
+## 📁 Estructura de carpetas requerida:
+```
+VotoColombia2026/
+├── VotoColombia2026app.py  (este código)
+└── imagenes/
+    ├── bandera_colombia.png
+    ├── gustavo_petro.png
+    └── colombia_arde_cibervoto.png
