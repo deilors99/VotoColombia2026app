@@ -9,6 +9,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 import hashlib
+import base64
 
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
@@ -18,481 +19,197 @@ from sklearn.metrics import silhouette_score
 # Configuración básica
 st.set_page_config(
     layout="wide", 
-    page_title="🇨🇴 Elecciones en Colombia 2026", 
-    page_icon="🇨🇴"
+    page_title="VOTO COLOMBIA PRESIDENCIALES 2026 🇨🇴", 
+    page_icon="🗳️"
 )
 
-# CSS Optimizado con colores mejorados
+# CSS Optimizado con Modal
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@400;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Exo+2:wght@400;700&display=swap');
     
-    /* ===== FONDO CON CARRUSEL DE IMÁGENES ===== */
-    .stApp {
-        background: none;
-    }
+  /* ===== FONDO CON CARRUSEL DE IMÁGENES ===== */
+.stApp {
+    background: none;
+}
 
-    .background-carousel {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        overflow: hidden;
-    }
+.background-carousel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
 
-    .background-carousel img {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0;
-        animation: carousel 24s infinite;
-    }
+.background-carousel img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    animation: carousel 24s infinite;
+}
 
-    .background-carousel img:nth-child(1) { animation-delay: 0s; }
-    .background-carousel img:nth-child(2) { animation-delay: 8s; }
-    .background-carousel img:nth-child(3) { animation-delay: 16s; }
+.background-carousel img:nth-child(1) { animation-delay: 0s; }
+.background-carousel img:nth-child(2) { animation-delay: 8s; }
+.background-carousel img:nth-child(3) { animation-delay: 16s; }
 
-    @keyframes carousel {
-        0% { opacity: 0; }
-        10% { opacity: 1; }
-        30% { opacity: 1; }
-        40% { opacity: 0; }
-        100% { opacity: 0; }
-    }
+@keyframes carousel {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    30% { opacity: 1; }
+    40% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
     
-    /* Overlay oscuro para mejor contraste */
-    .stApp::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.75);
-        z-index: -1;
-        pointer-events: none;
-    }
-    
-    /* ===== ESTILOS GLOBALES DE TEXTO ===== */
-    .stApp, .stApp p, .stApp span, .stApp div, .stApp label {
-        color: #FFFFFF !important;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) !important;
-    }
-    
-    /* Markdown y párrafos */
-    .stMarkdown, .stMarkdown p {
-        color: #FFFFFF !important;
-        font-size: 1.1rem !important;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9) !important;
-        font-weight: 500 !important;
-    }
-    
-    /* Títulos principales */
     h1 {
         font-family: 'Orbitron', sans-serif !important;
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
-        background-size: 200% auto;
-        -webkit-background-clip: text !important;
-        -webkit-text-fill-color: transparent !important;
-        background-clip: text !important;
+        color: #FFD700 !important;
         text-align: center !important;
-        font-size: 4rem !important;
-        font-weight: 900 !important;
-        animation: shimmer 3s linear infinite, glow 2s ease-in-out infinite !important;
-        letter-spacing: 4px !important;
-        margin: 30px 0 !important;
-        filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8)) !important;
-    }
-    
-    @keyframes shimmer {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 200% 50%; }
+        font-size: 3rem !important;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.5) !important;
+        animation: glow 2s ease-in-out infinite !important;
     }
     
     @keyframes glow {
-        0%, 100% { 
-            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
-        }
-        50% { 
-            filter: drop-shadow(0 0 40px rgba(255, 215, 0, 1));
-        }
+        0%, 100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+        50% { text-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
     }
     
-    /* Subtítulos h2 */
     h2 {
         font-family: 'Exo 2', sans-serif !important;
-        background: linear-gradient(135deg, #87CEEB 0%, #4A90E2 50%, #87CEEB 100%);
-        background-size: 200% auto;
-        -webkit-background-clip: text !important;
-        -webkit-text-fill-color: transparent !important;
-        background-clip: text !important;
+        color: #87CEEB !important;
         text-align: center !important;
-        font-size: 2.5rem !important;
-        font-weight: 900 !important;
-        animation: shimmer 4s linear infinite !important;
-        letter-spacing: 3px !important;
-        filter: drop-shadow(0 0 20px rgba(135, 206, 235, 0.8)) !important;
     }
     
-    /* Subtítulos h3 */
     h3 {
         font-family: 'Orbitron', sans-serif !important;
         color: #FFD700 !important;
-        font-size: 2rem !important;
-        font-weight: 900 !important;
-        text-shadow: 
-            0 0 20px rgba(255, 215, 0, 0.8),
-            0 0 40px rgba(255, 215, 0, 0.6),
-            2px 2px 8px rgba(0, 0, 0, 0.9) !important;
-        letter-spacing: 2px !important;
     }
     
-    /* Subtítulos h4 */
-    h4 {
-        color: #FFD700 !important;
-        font-family: 'Exo 2', sans-serif !important;
-        font-size: 1.5rem !important;
-        font-weight: 700 !important;
-        text-shadow: 
-            0 0 15px rgba(255, 215, 0, 0.7),
-            2px 2px 6px rgba(0, 0, 0, 0.9) !important;
-    }
-    
-    /* Textos de párrafo */
-    p, span, div {
-        color: #FFFFFF !important;
-        font-family: 'Exo 2', sans-serif !important;
-        font-weight: 500 !important;
-        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9) !important;
-    }
-    
-    /* Botones */
     .stButton>button {
-        font-family: 'Orbitron', sans-serif !important;
-        background: linear-gradient(145deg, #FFD700, #FFA500) !important;
-        color: #000000 !important;
-        font-weight: 900 !important;
-        border-radius: 15px !important;
-        padding: 18px 35px !important;
-        font-size: 1.3rem !important;
-        border: 3px solid #FFD700 !important;
-        box-shadow: 
-            0 8px 25px rgba(255, 215, 0, 0.6),
-            inset 0 2px 0 rgba(255, 255, 255, 0.3) !important;
+        background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+        color: black !important;
+        font-weight: bold !important;
+        border-radius: 12px !important;
+        padding: 15px 30px !important;
+        font-size: 1.2rem !important;
+        border: none !important;
+        box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4) !important;
         transition: all 0.3s ease !important;
-        text-transform: uppercase !important;
-        letter-spacing: 3px !important;
-        text-shadow: none !important;
     }
     
     .stButton>button:hover {
-        transform: translateY(-5px) scale(1.05) !important;
-        box-shadow: 
-            0 15px 40px rgba(255, 215, 0, 0.8),
-            inset 0 3px 0 rgba(255, 255, 255, 0.4) !important;
-        background: linear-gradient(145deg, #FFA500, #FFD700) !important;
+        transform: translateY(-3px) scale(1.05) !important;
+        box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6) !important;
     }
     
-    /* Cards modernas */
     .card-modern {
-        background: linear-gradient(135deg, 
-            rgba(0, 0, 0, 0.9) 0%, 
-            rgba(15, 12, 41, 0.95) 100%) !important;
-        backdrop-filter: blur(20px) !important;
-        border-radius: 20px !important;
-        padding: 30px !important;
-        border: 3px solid rgba(255, 215, 0, 0.6) !important;
-        margin: 20px 0 !important;
-        transition: all 0.4s ease !important;
-        box-shadow: 
-            0 10px 40px rgba(0, 0, 0, 0.8),
-            0 0 40px rgba(255, 215, 0, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 25px;
+        border: 2px solid rgba(255, 215, 0, 0.3);
+        margin: 15px 0;
+        transition: all 0.3s ease;
     }
     
     .card-modern:hover {
-        transform: translateY(-10px) scale(1.02) !important;
-        box-shadow: 
-            0 20px 60px rgba(255, 215, 0, 0.5),
-            0 0 60px rgba(255, 215, 0, 0.4) !important;
-        border-color: #FFD700 !important;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
     }
     
-    .card-modern h4 {
-        color: #FFD700 !important;
-        font-size: 1.8rem !important;
-        font-weight: 900 !important;
-        text-shadow: 0 0 20px rgba(255, 215, 0, 0.8) !important;
-    }
-    
-    .card-modern p {
-        color: #FFFFFF !important;
-        font-size: 1.1rem !important;
-        font-weight: 500 !important;
-        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9) !important;
-    }
-    
-    .card-modern a {
-        color: #FFD700 !important;
-        font-weight: 700 !important;
-        font-size: 1.2rem !important;
-        text-decoration: none !important;
-        text-shadow: 0 0 15px rgba(255, 215, 0, 0.7) !important;
-        transition: all 0.3s ease !important;
-    }
-    
-    .card-modern a:hover {
-        color: #FFA500 !important;
-        text-shadow: 0 0 25px rgba(255, 215, 0, 1) !important;
-        transform: scale(1.1) !important;
-    }
-    
-    /* Métricas */
     [data-testid="stMetricValue"] {
-        font-family: 'Orbitron', sans-serif !important;
-        font-size: 2.8rem !important;
-        font-weight: 900 !important;
-        background: linear-gradient(135deg, #FFD700, #FFA500) !important;
-        -webkit-background-clip: text !important;
-        -webkit-text-fill-color: transparent !important;
-        background-clip: text !important;
-        animation: pulse 2s ease-in-out infinite !important;
-        filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)) !important;
-    }
-    
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.05); opacity: 0.9; }
+        font-size: 2rem !important;
+        color: #FFD700 !important;
+        font-weight: bold !important;
     }
     
     [data-testid="stMetricLabel"] {
-        font-family: 'Exo 2', sans-serif !important;
         color: #87CEEB !important;
-        font-size: 1.4rem !important;
-        font-weight: 900 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 2px !important;
-        text-shadow: 
-            0 0 20px rgba(135, 206, 235, 0.8),
-            2px 2px 6px rgba(0, 0, 0, 0.9) !important;
-    }
-    
-    /* Labels de inputs */
-    .stTextInput>label, .stSelectbox>label {
-        font-family: 'Exo 2', sans-serif !important;
-        color: #FFD700 !important;
-        font-weight: 900 !important;
         font-size: 1.2rem !important;
-        letter-spacing: 1px !important;
-        text-transform: uppercase !important;
-        text-shadow: 
-            0 0 15px rgba(255, 215, 0, 0.8),
-            2px 2px 6px rgba(0, 0, 0, 0.9) !important;
-    }
-    
-    /* Inputs */
-    .stTextInput>div>div>input,
-    .stSelectbox>div>div>select {
-        font-family: 'Exo 2', sans-serif !important;
-        background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(30, 40, 55, 0.9)) !important;
-        backdrop-filter: blur(15px) !important;
-        color: #FFFFFF !important;
-        font-size: 1.1rem !important;
-        font-weight: 700 !important;
-        border: 3px solid rgba(255, 215, 0, 0.5) !important;
-        border-radius: 12px !important;
-        padding: 15px !important;
-        box-shadow: 
-            inset 0 2px 8px rgba(0, 0, 0, 0.6),
-            0 0 20px rgba(255, 215, 0, 0.2) !important;
-        transition: all 0.3s ease !important;
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
-    }
-    
-    .stTextInput>div>div>input:focus,
-    .stSelectbox>div>div>select:focus {
-        border-color: #FFD700 !important;
-        box-shadow: 
-            0 0 30px rgba(255, 215, 0, 0.6),
-            inset 0 2px 8px rgba(0, 0, 0, 0.6) !important;
-    }
-    
-    /* Tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 15px;
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(15, 20, 25, 0.95));
-        backdrop-filter: blur(20px);
-        padding: 20px;
-        border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-        border: 2px solid rgba(255, 215, 0, 0.3);
     }
     
     .stTabs [data-baseweb="tab"] {
-        font-family: 'Orbitron', sans-serif !important;
-        background: linear-gradient(145deg, rgba(0, 0, 0, 0.8), rgba(30, 40, 55, 0.9)) !important;
-        backdrop-filter: blur(15px) !important;
-        border-radius: 12px !important;
-        padding: 15px 30px !important;
+        background-color: rgba(45, 55, 72, 0.6) !important;
         color: #87CEEB !important;
-        font-weight: 900 !important;
-        font-size: 1.1rem !important;
-        border: 3px solid rgba(135, 206, 235, 0.4) !important;
-        transition: all 0.3s ease !important;
-        text-transform: uppercase !important;
-        letter-spacing: 2px !important;
-        text-shadow: 
-            0 0 15px rgba(135, 206, 235, 0.7),
-            2px 2px 6px rgba(0, 0, 0, 0.9) !important;
-    }
-    
-    .stTabs [data-baseweb="tab"]:hover {
-        border-color: #FFD700 !important;
-        transform: translateY(-3px) !important;
-        box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5) !important;
-        color: #FFD700 !important;
+        border-radius: 10px !important;
     }
     
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(145deg, #FFD700, #FFA500) !important;
-        color: #000000 !important;
-        font-weight: 900 !important;
-        border: 3px solid #FFD700 !important;
-        box-shadow: 0 0 40px rgba(255, 215, 0, 0.8) !important;
-        transform: scale(1.08) !important;
-        text-shadow: none !important;
+        background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+        color: black !important;
     }
     
-    /* Progress bar */
-    .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, 
-            #FFD700 0%, 
-            #FFA500 25%, 
-            #FFD700 50%, 
-            #FFA500 75%, 
-            #FFD700 100%) !important;
-        background-size: 200% auto !important;
-        animation: shimmer 2s linear infinite !important;
-        box-shadow: 0 0 25px rgba(255, 215, 0, 0.8) !important;
-        border-radius: 10px !important;
-        height: 14px !important;
-    }
-    
-    /* Sidebar */
-    .stSidebar {
-        background: linear-gradient(180deg, 
-            rgba(0, 0, 0, 0.95) 0%, 
-            rgba(15, 20, 25, 0.98) 100%) !important;
-        backdrop-filter: blur(25px) !important;
-        border-right: 4px solid rgba(255, 215, 0, 0.6) !important;
-        box-shadow: 5px 0 40px rgba(0, 0, 0, 0.9) !important;
-    }
-    
-    .stSidebar h2, .stSidebar h3 {
-        color: #FFD700 !important;
-        text-shadow: 0 0 20px rgba(255, 215, 0, 0.8) !important;
-    }
-    
-    /* Captions */
-    .stCaption, .caption {
-        color: #87CEEB !important;
-        font-size: 1rem !important;
-        font-weight: 600 !important;
-        text-shadow: 
-            0 0 10px rgba(135, 206, 235, 0.7),
-            2px 2px 5px rgba(0, 0, 0, 0.9) !important;
-    }
-    
-    /* Info boxes */
-    .stInfo, .stSuccess, .stWarning, .stError {
-        border-radius: 15px !important;
-        padding: 20px !important;
-        border-left: 5px solid !important;
-        backdrop-filter: blur(20px) !important;
-        font-weight: 700 !important;
-        font-size: 1.1rem !important;
-        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.9) !important;
-    }
-    
-    .stInfo {
-        background: rgba(135, 206, 235, 0.2) !important;
-        border-color: #87CEEB !important;
-        color: #FFFFFF !important;
-    }
-    
-    .stSuccess {
-        background: rgba(0, 255, 127, 0.2) !important;
-        border-color: #00FF7F !important;
-        color: #FFFFFF !important;
-    }
-    
-    .stWarning {
-        background: rgba(255, 215, 0, 0.2) !important;
-        border-color: #FFD700 !important;
-        color: #FFFFFF !important;
-    }
-    
-    .stError {
-        background: rgba(255, 50, 50, 0.2) !important;
-        border-color: #FF3232 !important;
-        color: #FFFFFF !important;
-    }
-    
-    /* Dataframe */
-    .stDataFrame {
-        background: rgba(0, 0, 0, 0.85) !important;
-        backdrop-filter: blur(20px) !important;
-        border-radius: 15px !important;
-        border: 3px solid rgba(135, 206, 235, 0.4) !important;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
-    }
-    
-    /* Divider */
-    hr {
-        border: none !important;
-        height: 4px !important;
-        background: linear-gradient(90deg, 
-            transparent, 
-            rgba(255, 215, 0, 0.8), 
-            transparent) !important;
-        margin: 40px 0 !important;
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.6) !important;
-    }
-    
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-        width: 16px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.7);
-        border-radius: 10px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
+    /* Botón especial para iniciar votación */
+    .vote-start-button {
         background: linear-gradient(135deg, #FFD700, #FFA500);
-        border-radius: 10px;
-        border: 2px solid rgba(0, 0, 0, 0.7);
-        box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        color: black;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2rem;
+        font-weight: 900;
+        padding: 40px 60px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 10px 40px rgba(255, 215, 0, 0.5);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        width: 100%;
+        margin: 50px 0;
     }
     
-    ::-webkit-scrollbar-thumb:hover {
+    .vote-start-button:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0 20px 60px rgba(255, 215, 0, 0.8);
         background: linear-gradient(135deg, #FFA500, #FFD700);
-        box-shadow: 0 0 25px rgba(255, 215, 0, 1);
+    }
+    
+    /* Animación de pulso para el botón */
+    @keyframes pulse-glow {
+        0%, 100% {
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.5);
+        }
+        50% {
+            box-shadow: 0 10px 60px rgba(255, 215, 0, 0.9);
+        }
+    }
+    
+    .vote-start-button {
+        animation: pulse-glow 2s ease-in-out infinite;
     }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<div class="background-carousel">
-    <img src="https://images.unsplash.com/photo-1581090700227-1e37b190418e">
-    <img src="https://images.unsplash.com/photo-1541873676-a18131494184">
-    <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620">
-</div>
-""", unsafe_allow_html=True)
+# Función para convertir imagen a base64
+def get_base64_image(image_path):
+    try:
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    except FileNotFoundError:
+        st.error(f"❌ No se encontró la imagen: {image_path}")
+        return None
+
+# Cargar las imágenes desde la carpeta 'imagenes'
+img1_base64 = get_base64_image("imagenes/bandera_colombia.png")
+img2_base64 = get_base64_image("imagenes/gustavo_petro.png")
+img3_base64 = get_base64_image("imagenes/colombia_arde_cibervoto.png")
+
+# Renderizar el carrusel con las imágenes en base64
+if img1_base64 and img2_base64 and img3_base64:
+    st.markdown(f"""
+    <div class="background-carousel">
+        <img src="data:image/png;base64,{img1_base64}">
+        <img src="data:image/png;base64,{img2_base64}">
+        <img src="data:image/png;base64,{img3_base64}">
+    </div>
+    """, unsafe_allow_html=True)
+else:
+    st.warning("⚠️ No se pudieron cargar algunas imágenes del carrusel")
 
 # Datos
 candidatos = [
@@ -514,9 +231,9 @@ def generar_hash(cedula):
     return hashlib.sha256(cedula.encode()).hexdigest()[:16]
 
 # HEADER
-st.title("🇨🇴 Elecciones Colombia 2026")
+st.title("🇨🇴 VOTO COLOMBIA PRESIDENCIALES 2026-20")
 st.markdown("### Encuesta Electoral Segura")
-st.markdown("**Vote si hipotéticamente GUSTAVO PETRO fuera candidato electo, nos gustaría saber quiénes apoyan al actual presidente para un próximo periodo**")
+st.markdown("**Creador: Deiber Yesid López Ramírez - Data Analyst**")
 st.markdown("---")
 
 # Enlaces Oficiales
@@ -558,7 +275,7 @@ with col3:
 
 st.markdown("---")
 
-# SIDEBAR - VOTACIÓN
+# SIDEBAR - VOTACIÓN (SIEMPRE VISIBLE)
 with st.sidebar:
     st.header("🗳️ EMITE TU VOTO")
     
@@ -605,12 +322,12 @@ if st.session_state.datos_votos.empty:
     st.markdown("""
     <div style="text-align: center; padding: 100px 20px;">
         <div style="
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(25px);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
             border-radius: 30px;
             padding: 80px 40px;
-            border: 3px solid rgba(255, 215, 0, 0.6);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            border: 3px solid rgba(255, 215, 0, 0.4);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             max-width: 800px;
             margin: 0 auto;
         ">
@@ -620,14 +337,13 @@ if st.session_state.datos_votos.empty:
                 color: #FFD700;
                 font-size: 3rem;
                 margin-bottom: 20px;
-                text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+                text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
             ">¡Inicia la Encuesta Electoral!</h2>
             <p style="
                 font-family: 'Exo 2', sans-serif;
-                color: #FFFFFF;
+                color: #87CEEB;
                 font-size: 1.5rem;
                 margin-bottom: 40px;
-                text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
             ">Sé el primero en hacer historia</p>
         </div>
     </div>
@@ -640,6 +356,72 @@ if st.session_state.datos_votos.empty:
             st.rerun()
     
     if st.session_state.show_vote_modal:
+        st.markdown("""
+        <style>
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: fadeIn 0.3s ease-out;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            .modal-content {
+                background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+                border-radius: 30px;
+                padding: 60px;
+                max-width: 700px;
+                width: 90%;
+                border: 3px solid #FFD700;
+                box-shadow: 0 30px 100px rgba(255, 215, 0, 0.6);
+                animation: slideInFromBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+            }
+            
+            @keyframes slideInFromBottom {
+                from {
+                    transform: translateY(100vh);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            
+            .modal-close {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                background: rgba(255, 50, 50, 0.8);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .modal-close:hover {
+                background: rgba(255, 50, 50, 1);
+                transform: scale(1.1) rotate(90deg);
+            }
+        </style>
+        """, unsafe_allow_html=True)
+        
         modal_container = st.container()
         
         with modal_container:
@@ -652,9 +434,9 @@ if st.session_state.datos_votos.empty:
                         font-family: 'Orbitron', sans-serif;
                         color: #FFD700;
                         font-size: 2.5rem;
-                        text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+                        text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
                     ">🗳️ FORMULARIO DE VOTACIÓN</h2>
-                    <p style="color: #FFFFFF; font-size: 1.2rem; text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);">Completa tus datos para emitir tu voto</p>
+                    <p style="color: #87CEEB; font-size: 1.2rem;">Completa tus datos para emitir tu voto</p>
                 </div>
                 """, unsafe_allow_html=True)
                 
@@ -949,11 +731,10 @@ else:
             🔍 *Análisis estadístico no predictivo, con fines académicos.*
             """)
 
-# Footer
 st.markdown("---")
 st.markdown("""
-<div style="text-align: center; color: #FFFFFF; padding: 20px;">
-    <p style="font-size: 1.2rem; text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);"><b>✨ Desarrollado por Deiber Yesid López Ramírez - Data Analyst</b></p>
-    <p style="text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);">🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
+<div style="text-align: center; color: #87CEEB; padding: 20px;">
+    <p><b>✨ Desarrollado por Deiber Yesid López Ramírez - Data Analyst</b></p>
+    <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
