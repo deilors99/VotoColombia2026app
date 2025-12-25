@@ -1,18 +1,8 @@
-# ============================================
-# VOTO COLOMBIA 2026 - Sistema de Encuesta Electoral
-# Creador: Deiber Yesid López Ramírez
-# ============================================
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 from datetime import datetime
-import hashlib
-
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.metrics import silhouette_score
+import random  # Para simular IP si quieres
 
 # ================= CONFIG =================
 st.set_page_config(
@@ -27,14 +17,12 @@ st.markdown("""
 .stApp {
     background: none;
 }
-
 .background-carousel {
     position: fixed;
     inset: 0;
     z-index: -1;
     overflow: hidden;
 }
-
 .background-carousel img {
     position: absolute;
     width: 100%;
@@ -43,18 +31,15 @@ st.markdown("""
     opacity: 0;
     animation: carousel 24s infinite;
 }
-
 .background-carousel img:nth-child(1){animation-delay:0s;}
 .background-carousel img:nth-child(2){animation-delay:8s;}
 .background-carousel img:nth-child(3){animation-delay:16s;}
-
 @keyframes carousel {
     0%{opacity:0;}
     10%{opacity:1;}
     30%{opacity:1;}
     40%{opacity:0;}
 }
-
 .stApp::after{
     content:'';
     position:fixed;
@@ -68,9 +53,9 @@ st.markdown("""
 # ================= CARRUSEL =================
 st.markdown("""
 <div class="background-carousel">
-    <img src="imagenes/petro.jpg">
-    <img src="imagenes/bandera.jpg">
-    <img src="imagenes/elecciones.jpg">
+    <img src="https://images.unsplash.com/photo-1582213782179-4841c6f00b1d?ixlib=rb-4.0.3&auto=format&fit=crop&q=80"> <!-- Petro ejemplo -->
+    <img src="https://images.unsplash.com/photo-1578301978018-7e9d8f5e5d9d?ixlib=rb-4.0.3&auto=format&fit=crop&q=80"> <!-- Bandera Colombia -->
+    <img src="https://images.unsplash.com/photo-1561417268-3b6e8e4a9d9e?ixlib=rb-4.0.3&auto=format&fit=crop&q=80"> <!-- Elecciones ejemplo -->
 </div>
 """, unsafe_allow_html=True)
 
@@ -90,14 +75,13 @@ if "datos_votos" not in st.session_state:
     )
 
 # ================= HEADER =================
-st.title("Elecciones Colombia 2026")
+st.title("🇨🇴 Elecciones Colombia 2026")
 st.markdown("### Análisis electoral hipotético")
 st.markdown("---")
 
 # ================= SIDEBAR =================
 with st.sidebar:
     st.header("🗳️ Emitir voto")
-
     with st.form("voto"):
         nombre = st.text_input("Nombre")
         departamento = st.selectbox("Departamento", [
@@ -105,9 +89,7 @@ with st.sidebar:
         ])
         ult5 = st.text_input("Últimos 5 dígitos cédula", max_chars=5, type="password")
         candidato = st.selectbox("Candidato", candidatos)
-
         enviar = st.form_submit_button("Votar")
-
         if enviar:
             if not nombre or departamento=="Selecciona..." or len(ult5)!=5:
                 st.error("Datos incompletos")
@@ -129,7 +111,6 @@ if not st.session_state.datos_votos.empty:
         .size()
         .reset_index(name="votos")
     )
-
     fig = px.pie(
         resumen,
         values="votos",
@@ -145,8 +126,8 @@ if not st.session_state.datos_votos.empty:
 # ================= FOOTER =================
 st.markdown("---")
 st.markdown("""
-<p style="text-align:center">
+<p style="text-align:center; color:#FFD700;">
 <b>Desarrollado por Deiber Yesid López Ramírez</b><br>
-Encuesta académica – No oficial
+Encuesta académica – No oficial ➡️
 </p>
 """, unsafe_allow_html=True)
