@@ -18,7 +18,7 @@ from sklearn.metrics import silhouette_score
 # Configuración básica
 st.set_page_config(
     layout="wide", 
-    page_title="¡COLOMBIA VOTA!, VOTARIA NUEVAMENTE POR "GUSTAVO PETRO"? 🇨🇴", 
+    page_title="VOTO COLOMBIA PRESIDENCIALES 2026 🇨🇴", 
     page_icon="🗳️"
 )
 
@@ -745,6 +745,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
