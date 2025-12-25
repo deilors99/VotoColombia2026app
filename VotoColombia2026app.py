@@ -9,8 +9,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 import hashlib
-import base64
-import os
 
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
@@ -186,31 +184,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Función para convertir imagen a base64
-def get_base64_image(image_path):
-    try:
-        with open(image_path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
-    except FileNotFoundError:
-        st.error(f"❌ No se encontró la imagen: {image_path}")
-        return None
+st.markdown("""
+<div class="background-carousel">
+    <img src="imágenes/bandera_colombia.png">
+    <img src="imágenes/gustavo_petro.png">
+    <img src="imágenes/colombia_arde_cibervoto.png">
+">
+</div>
+""", unsafe_allow_html=True)
 
-# Cargar las imágenes desde la carpeta 'imagenes'
-img1_base64 = get_base64_image("imagenes/bandera_colombia.png")
-img2_base64 = get_base64_image("imagenes/gustavo_petro.png")
-img3_base64 = get_base64_image("imagenes/colombia_arde_cibervoto.png")
-
-# Renderizar el carrusel con las imágenes en base64
-if img1_base64 and img2_base64 and img3_base64:
-    st.markdown(f"""
-    <div class="background-carousel">
-        <img src="data:image/png;base64,{img1_base64}">
-        <img src="data:image/png;base64,{img2_base64}">
-        <img src="data:image/png;base64,{img3_base64}">
-    </div>
-    """, unsafe_allow_html=True)
-else:
-    st.warning("⚠️ No se pudieron cargar algunas imágenes del carrusel")
 
 # Datos
 candidatos = [
@@ -764,3 +746,10 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
+
+
+
+
+
+
