@@ -18,8 +18,8 @@ from sklearn.metrics import silhouette_score
 # Configuración básica
 st.set_page_config(
     layout="wide", 
-    page_title="VOTO COLOMBIA PRESIDENCIALES 2026 🇨🇴", 
-    page_icon="🗳️"
+    page_title="🇨🇴 Elecciones en Colombia 2026", 
+    page_icon="🇨🇴"
 )
 
 # CSS Optimizado con Modal
@@ -186,9 +186,9 @@ st.markdown("""
 
 st.markdown("""
 <div class="background-carousel">
-    <img src="imágenes/bandera_colombia.png">
-    <img src="imágenes/gustavo_petro.png">
-    <img src="imágenes/colombia_arde_cibervoto.png">
+    <img src="https://images.unsplash.com/photo-1581090700227-1e37b190418e">
+    <img src="https://images.unsplash.com/photo-1541873676-a18131494184">
+    <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620">
 ">
 </div>
 """, unsafe_allow_html=True)
@@ -214,9 +214,9 @@ def generar_hash(cedula):
     return hashlib.sha256(cedula.encode()).hexdigest()[:16]
 
 # HEADER
-st.title("🇨🇴 VOTO COLOMBIA PRESIDENCIALES 2026-20")
+st.title("🇨🇴 Elecciones Colombia 2026")
 st.markdown("### Encuesta Electoral Segura")
-st.markdown("**Creador: Deiber Yesid López Ramírez - Data Analyst**")
+st.markdown("**vote si hipoteticamente GUSTAVO PETRO fuera candidato electo, nos gustaria saber quienes apoyan a el actual pesidente para un proximo periodo**")
 st.markdown("---")
 
 # Enlaces Oficiales
@@ -746,8 +746,6 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
-
-
 
 
 
