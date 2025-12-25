@@ -186,7 +186,7 @@ st.markdown("""
 
 st.markdown("""
 <div class="background-carousel">
-    <img src="[[File:Presidente Gustavo Petro en 2023.jpg|Presidente_Gustavo_Petro_en_2023]]">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Flag_of_Colombia_waving.jpg">
     <img src="https://images.unsplash.com/photo-1541873676-a18131494184">
     <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620">
 </div>
@@ -745,5 +745,6 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
