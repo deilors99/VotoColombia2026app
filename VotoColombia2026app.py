@@ -9,7 +9,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 import hashlib
-import base64
 
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
@@ -185,31 +184,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Función para convertir imagen a base64
-def get_base64_image(image_path):
-    try:
-        with open(image_path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
-    except FileNotFoundError:
-        st.error(f"❌ No se encontró la imagen: {image_path}")
-        return None
+st.markdown("""
+<div class="background-carousel">
+    <img src="imágenes/bandera_colombia.png">
+    <img src="imágenes/gustavo_petro.png">
+    <img src="imágenes/colombia_arde_cibervoto.png">
+">
+</div>
+""", unsafe_allow_html=True)
 
-# Cargar las imágenes desde la carpeta 'imagenes'
-img1_base64 = get_base64_image("imagenes/bandera_colombia.png")
-img2_base64 = get_base64_image("imagenes/gustavo_petro.png")
-img3_base64 = get_base64_image("imagenes/colombia_arde_cibervoto.png")
-
-# Renderizar el carrusel con las imágenes en base64
-if img1_base64 and img2_base64 and img3_base64:
-    st.markdown(f"""
-    <div class="background-carousel">
-        <img src="data:image/png;base64,{img1_base64}">
-        <img src="data:image/png;base64,{img2_base64}">
-        <img src="data:image/png;base64,{img3_base64}">
-    </div>
-    """, unsafe_allow_html=True)
-else:
-    st.warning("⚠️ No se pudieron cargar algunas imágenes del carrusel")
 
 # Datos
 candidatos = [
@@ -319,6 +302,7 @@ with st.sidebar:
 
 # CONTENIDO PRINCIPAL
 if st.session_state.datos_votos.empty:
+    # BOTÓN GRANDE PARA INICIAR VOTACIÓN
     st.markdown("""
     <div style="text-align: center; padding: 100px 20px;">
         <div style="
@@ -349,15 +333,18 @@ if st.session_state.datos_votos.empty:
     </div>
     """, unsafe_allow_html=True)
     
+    # Botón centrado
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         if st.button("🚀 EMITIR MI VOTO AHORA", use_container_width=True, key="btn_iniciar_voto"):
             st.session_state.show_vote_modal = True
             st.rerun()
     
+    # MODAL DE VOTACIÓN EN PANTALLA COMPLETA
     if st.session_state.show_vote_modal:
         st.markdown("""
         <style>
+            /* Overlay de fondo oscuro */
             .modal-overlay {
                 position: fixed;
                 top: 0;
@@ -377,6 +364,7 @@ if st.session_state.datos_votos.empty:
                 to { opacity: 1; }
             }
             
+            /* Contenedor del formulario */
             .modal-content {
                 background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
                 border-radius: 30px;
@@ -400,6 +388,7 @@ if st.session_state.datos_votos.empty:
                 }
             }
             
+            /* Botón de cerrar */
             .modal-close {
                 position: absolute;
                 top: 20px;
@@ -422,9 +411,11 @@ if st.session_state.datos_votos.empty:
         </style>
         """, unsafe_allow_html=True)
         
+        # Contenedor del modal
         modal_container = st.container()
         
         with modal_container:
+            # Columnas para centrar el contenido
             col_modal1, col_modal2, col_modal3 = st.columns([1, 3, 1])
             
             with col_modal2:
@@ -440,12 +431,14 @@ if st.session_state.datos_votos.empty:
                 </div>
                 """, unsafe_allow_html=True)
                 
+                # Botón de cerrar
                 if st.button("✖️ CERRAR", key="btn_cerrar_modal", use_container_width=True):
                     st.session_state.show_vote_modal = False
                     st.rerun()
                 
                 st.markdown("<br>", unsafe_allow_html=True)
                 
+                # FORMULARIO EN EL MODAL
                 with st.form("form_voto_modal"):
                     nombre_modal = st.text_input(
                         "✍️ Nombre Completo",
@@ -514,6 +507,7 @@ if st.session_state.datos_votos.empty:
                             st.rerun()
 
 else:
+    # Resultados cuando hay votos
     resumen = (st.session_state.datos_votos
                .groupby("candidato")["votos"]
                .sum()
@@ -522,6 +516,7 @@ else:
     total = resumen["votos"].sum()
     resumen["porcentaje"] = (resumen["votos"] / total * 100).round(2)
     
+    # Tabs principales
     tab1, tab2, tab3, tab4 = st.tabs([
         "📊 RESULTADOS",
         "📈 ANÁLISIS",
@@ -530,6 +525,7 @@ else:
     ])
     
     with tab1:
+        # Métricas
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.metric("🥇 LÍDER", resumen.iloc[0]["candidato"], f"{resumen.iloc[0]['porcentaje']}%")
@@ -545,6 +541,7 @@ else:
         
         st.markdown("---")
         
+        # Gráficos
         col_l, col_r = st.columns(2)
         
         with col_l:
@@ -591,6 +588,7 @@ else:
         )
         st.plotly_chart(fig_bar, use_container_width=True)
         
+        # Por departamento
         if len(st.session_state.datos_votos) > 0:
             st.subheader("🗺️ POR DEPARTAMENTO")
             votos_depto = (st.session_state.datos_votos
@@ -622,6 +620,7 @@ else:
         datos_mostrar['hora'] = datos_mostrar['hora'].dt.strftime('%Y-%m-%d %H:%M:%S')
         st.dataframe(datos_mostrar, use_container_width=True)
         
+        # Descarga
         csv = datos_mostrar.to_csv(index=False).encode('utf-8')
         st.download_button(
             "📥 Descargar CSV",
@@ -633,9 +632,11 @@ else:
     with tab4:
         st.subheader("🧠 Análisis Avanzado con Machine Learning")
         
+        # Verificar que hay suficientes datos
         if len(st.session_state.datos_votos) < 10:
             st.warning("⚠️ Se necesitan al menos 10 votos para realizar análisis de Machine Learning")
         else:
+            # Dataset para ML
             cluster_df = (
                 st.session_state.datos_votos
                 .groupby("departamento")
@@ -649,11 +650,13 @@ else:
             st.markdown("### 📋 Variables Analizadas")
             st.dataframe(cluster_df)
             
+            # Normalización
             scaler = StandardScaler()
             X_scaled = scaler.fit_transform(
                 cluster_df[["total_votos", "diversidad_candidatos"]]
             )
             
+            # K-Means
             n_clusters = min(3, len(cluster_df))
             
             kmeans = KMeans(
@@ -663,10 +666,12 @@ else:
             )
             cluster_df["cluster"] = kmeans.fit_predict(X_scaled)
             
+            # Métrica de calidad
             if n_clusters > 1:
                 score = silhouette_score(X_scaled, cluster_df["cluster"])
                 st.metric("📐 Silhouette Score", f"{score:.3f}")
             
+            # Visualización
             fig_cluster = px.scatter(
                 cluster_df,
                 x="total_votos",
@@ -691,6 +696,7 @@ else:
             
             st.plotly_chart(fig_cluster, use_container_width=True)
             
+            # PCA
             st.markdown("### 🔬 PCA – Reducción Dimensional")
             
             pca = PCA(n_components=2)
@@ -721,6 +727,7 @@ else:
             
             st.plotly_chart(fig_pca, use_container_width=True)
             
+            # Interpretación
             st.markdown("""
             ### 🧠 Interpretación Técnica
             
@@ -731,6 +738,7 @@ else:
             🔍 *Análisis estadístico no predictivo, con fines académicos.*
             """)
 
+# Footer
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #87CEEB; padding: 20px;">
@@ -738,3 +746,10 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
+
+
+
+
+
+
