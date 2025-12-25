@@ -488,11 +488,12 @@ st.markdown("""
 
 st.markdown("""
 <div class="background-carousel">
-    <img src="https://images.unsplash.com/photo-1581090700227-1e37b190418e">
-    <img src="https://images.unsplash.com/photo-1541873676-a18131494184">
-    <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620">
+    <img src="imagenes/carrusel_1_bandera.jpg">
+    <img src="imagenes/carrusel_2_petro.jpg">
+    <img src="imagenes/carrusel_3_cibervoto.jpg">
 </div>
 """, unsafe_allow_html=True)
+
 
 # Datos
 candidatos = [
@@ -957,5 +958,6 @@ st.markdown("""
     <p style="text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);" Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
