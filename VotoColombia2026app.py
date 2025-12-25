@@ -186,9 +186,10 @@ st.markdown("""
 
 st.markdown("""
 <div class="background-carousel">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Flag_of_Colombia_waving.jpg">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Coat_of_arms_of_Colombia.svg">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Presidente_Gustavo_Petro_U.jpg">
+    <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1920&h=1080&fit=crop&auto=format&q=80">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Gustavo_Petro_2022.jpg/1920px-Gustavo_Petro_2022.jpg">
+    <img src="https://cdn.pixabay.com/photo/2023/05/06/09/36/colombia-flag-7972339_1920.jpg
+">
 </div>
 """, unsafe_allow_html=True)
 
@@ -745,6 +746,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
