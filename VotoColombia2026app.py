@@ -6,6 +6,142 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from datetime import datetime
+
+# ================= CONFIG =================
+st.set_page_config(
+    layout="wide",
+    page_title="🇨🇴 Elecciones en Colombia 2026",
+    page_icon="🇨🇴"
+)
+
+# ================= CSS =================
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@400;700;900&display=swap');
+
+    /* Ocultar el icono original de menú hamburger */
+    section[data-testid="stSidebar"] > div:first-child > div:first-child > div:first-child > div:first-child > button {
+        display: none !important;
+    }
+
+    /* Botón personalizado con emoji para abrir sidebar */
+    .custom-menu-button {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 9999;
+        background: linear-gradient(145deg, #FFD700, #FFA500);
+        color: #000000;
+        font-size: 2rem;
+        font-weight: 900;
+        border: none;
+        border-radius: 15px;
+        padding: 10px 15px;
+        box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .custom-menu-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 15px 40px rgba(255, 215, 0, 0.8);
+    }
+
+    /* Resto de tu CSS (fondo, carrusel, etc.) */
+    .stApp {background: none;}
+    .background-carousel {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: -1; overflow: hidden;
+    }
+    .background-carousel img {
+        position: absolute;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        animation: carousel 24s infinite;
+    }
+    .background-carousel img:nth-child(1) {animation-delay: 0s;}
+    .background-carousel img:nth-child(2) {animation-delay: 8s;}
+    .background-carousel img:nth-child(3) {animation-delay: 16s;}
+    @keyframes carousel {
+        0% {opacity: 0;}
+        10% {opacity: 1;}
+        30% {opacity: 1;}
+        40% {opacity: 0;}
+        100% {opacity: 0;}
+    }
+
+    .stApp::after {
+        content: '';
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    /* Tus estilos de texto, títulos, botones, cards, etc. (los mantengo igual) */
+    h1 {
+        font-family: 'Orbitron', sans-serif !important;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+        background-size: 200% auto;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        text-align: center !important;
+        font-size: 4rem !important;
+        font-weight: 900 !important;
+        animation: shimmer 3s linear infinite;
+        letter-spacing: 4px !important;
+        filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8)) !important;
+    }
+
+    @keyframes shimmer {
+        0% {background-position: 0% 50%;}
+        100% {background-position: 200% 50%;}
+    }
+
+    /* ... (el resto de tu CSS largo, lo dejo igual) ... */
+</style>
+""", unsafe_allow_html=True)
+
+# ================= BOTÓN PERSONALIZADO CON EMOJI =================
+# Emoji que quieres: 🇨🇴 (bandera Colombia) – puedes cambiarlo por 🗳️ o ☰ o 🔥
+if st.sidebar.button("🇨🇴", key="custom_menu", help="Abrir menú de voto"):
+    pass  # El botón de sidebar ya abre el menú por defecto
+
+# ================= CARRUSEL =================
+st.markdown("""
+<div class="background-carousel">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/88/Presidente_Gustavo_Petro.jpg">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Colombia.svg/1280px-Flag_of_Colombia.svg.png">
+    <img src="https://images.unsplash.com/photo-1582213782179-4841c6f00b1d">
+</div>
+""", unsafe_allow_html=True)
+
+# ================= TU CÓDIGO ORIGINAL (datos, header, sidebar, contenido, footer) =================
+# (Pega aquí el resto de tu código original desde "# Datos" hasta el footer)
+
+# ... (todo tu código de candidatos, sidebar, tabs, footer, etc.)
+
+# Footer
+st.markdown("---")
+st.markdown("""
+<div style="text-align: center; color: #FFFFFF; padding: 20px;">
+    <p style="font-size: 1.2rem;"><b>✨ Desarrollado por Deiber Yesid López Ramírez - Student Data Analyst</b></p>
+    <p>Encuesta no oficial • Consulta fuentes oficiales arriba</p>
+</div>
+""", unsafe_allow_html=True)# ============================================
+# VOTO COLOMBIA 2026 - Sistema de Encuesta Electoral
+# Creador: Deiber Yesid López Ramírez
+# ============================================
+
+import streamlit as st
+import pandas as pd
+import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 import hashlib
@@ -957,6 +1093,7 @@ st.markdown("""
     <p style="text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);"><b> Encuesta no oficial • Consulta fuentes oficiales arriba</b></p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
