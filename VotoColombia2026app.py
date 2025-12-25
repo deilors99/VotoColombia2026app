@@ -488,9 +488,9 @@ st.markdown("""
 
 st.markdown("""
 <div class="background-carousel">
-    <img src="imagenes/carrusel_1_bandera.jpg">
-    <img src="imagenes/carrusel_2_petro.jpg">
-    <img src="imagenes/carrusel_3_cibervoto.jpg">
+    <imagenes/bandera de colombia.png">
+    <imagenes/presidente petro.png">
+    <imagenes/ciber voto.png">
 </div>
 """, unsafe_allow_html=True)
 
@@ -958,6 +958,7 @@ st.markdown("""
     <p style="text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);" Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
