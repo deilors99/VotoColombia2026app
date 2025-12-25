@@ -153,7 +153,7 @@ st.markdown("""
 
 # Datos
 candidatos = [
-    "Iván Cepeda", "Paloma Valencia", "Gustavo Petro (hipotético)",
+    "Gustavo Petro (hipotético)", "Paloma Valencia", "Iván Cepeda",
     "Sergio Fajardo", "Vicky Dávila", "Abelardo de la Espriella",
     "David Luna", "Juan Daniel Oviedo", "Otro"
 ]
@@ -703,3 +703,4 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
