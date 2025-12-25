@@ -520,7 +520,7 @@ st.markdown("**Con su voto aqui plasmado comparamos la diferencia con fuentes RE
 st.markdown("---")
 
 # Enlaces Oficiales
-st.markdown("### 📊 FUENTES OFICIALES DE ELECCIONES")
+st.markdown("### 📊 FUENTES OFICIALES DE LAS ELECCIONES EN COLOMBIA")
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -957,6 +957,7 @@ st.markdown("""
     <p style="text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);"><b> Encuesta no oficial • Consulta fuentes oficiales arriba</b></p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
