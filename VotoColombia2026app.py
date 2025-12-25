@@ -214,7 +214,7 @@ def generar_hash(cedula):
     return hashlib.sha256(cedula.encode()).hexdigest()[:16]
 
 # HEADER
-st.title("🇨🇴 VOTO COLOMBIA PRESIDENCIALES 2026-20")
+st.title("🇨🇴 Elecciones en Colombia 2026")
 st.markdown("### Encuesta Electoral Segura")
 st.markdown("**Creador: Deiber Yesid López Ramírez - Data Analyst**")
 st.markdown("---")
@@ -746,6 +746,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
