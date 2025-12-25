@@ -27,9 +27,42 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Exo+2:wght@400;700&display=swap');
     
-    .stApp {
-        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-    }
+  /* ===== FONDO CON CARRUSEL DE IMÁGENES ===== */
+.stApp {
+    background: none;
+}
+
+.background-carousel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.background-carousel img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    animation: carousel 24s infinite;
+}
+
+.background-carousel img:nth-child(1) { animation-delay: 0s; }
+.background-carousel img:nth-child(2) { animation-delay: 8s; }
+.background-carousel img:nth-child(3) { animation-delay: 16s; }
+
+@keyframes carousel {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    30% { opacity: 1; }
+    40% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
     
     h1 {
         font-family: 'Orbitron', sans-serif !important;
@@ -150,6 +183,15 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+st.markdown("""
+<div class="background-carousel">
+    <img src="https://images.unsplash.com/photo-1581090700227-1e37b190418e">
+    <img src="https://images.unsplash.com/photo-1541873676-a18131494184">
+    <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620">
+</div>
+""", unsafe_allow_html=True)
+
 
 # Datos
 candidatos = [
@@ -703,3 +745,4 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
