@@ -18,8 +18,8 @@ from sklearn.metrics import silhouette_score
 # Configuración básica
 st.set_page_config(
     layout="wide", 
-    page_title="VOTO COLOMBIA PRESIDENCIALES 2026 🇨🇴", 
-    page_icon="🗳️"
+    page_title="🇨🇴 Elecciones en Colombia 2026", 
+    page_icon="🇨🇴"
 )
 
 # CSS Optimizado con Modal
@@ -746,6 +746,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
