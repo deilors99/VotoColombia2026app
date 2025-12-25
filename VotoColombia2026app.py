@@ -488,7 +488,7 @@ st.markdown("""
 st.markdown(""" 
 <div class="background-carousel">
  <img src="https://upload.wikimedia.org/wikipedia/commons/8/88/Presidente_Gustavo_Petro.jpg">
- <img src="https://static4.depositphotos.com/1007566/491/i/450/depositphotos_4914447-stock-photo-colombia-flag.jpg">
+ <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwQ4b8jRvcOjl29nseUr6kETF1vElBgVfwZg&s">
  <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620">
  </div> """, unsafe_allow_html=True)
 
@@ -512,11 +512,9 @@ def generar_hash(cedula):
     return hashlib.sha256(cedula.encode()).hexdigest()[:16]
 
 # HEADER
-st.title("Elecciones-Colombia 2026")
-st.markdown("### Analisis Electoral Seguro")
-st.markdown("**Vote por el candidato presidencial de su eleccion para un próximo periodo.**")
-st.markdown("**Vote si hipotéticamente GUSTAVO PETRO fuera candidato electo, nos gustaría saber quiénes apoyan al actual presidente para un próximo periodo.**")
-st.markdown("**Con su voto aqui plasmado comparamos la diferencia con fuentes REALES.**")
+st.title("🇨🇴 Elecciones Colombia 2026")
+st.markdown("### Encuesta Electoral Segura")
+st.markdown("**Vote si hipotéticamente GUSTAVO PETRO fuera candidato electo, nos gustaría saber quiénes apoyan al actual presidente para un próximo periodo**")
 st.markdown("---")
 
 # Enlaces Oficiales
@@ -954,15 +952,9 @@ st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #FFFFFF; padding: 20px;">
     <p style="font-size: 1.2rem; text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);"><b>✨ Desarrollado por Deiber Yesid López Ramírez - Student Data Analyst</b></p>
-    <p style="text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);"><b> Encuesta no oficial • Consulta fuentes oficiales arriba</b></p>
+    <p style="text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);" Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
-
-
-
-
-
-
 
 
 
