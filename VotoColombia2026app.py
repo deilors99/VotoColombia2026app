@@ -187,7 +187,7 @@ st.markdown("""
 st.markdown("""
 <div class="background-carousel">
     <img src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Flag_of_Colombia_waving.jpg">
-    <img src="https://https://upload.wikimedia.org/wikipedia/commons/e/ef/Coat_of_arms_of_Colombia.svg">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Coat_of_arms_of_Colombia.svg">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Presidente_Gustavo_Petro_U.jpg">
 </div>
 """, unsafe_allow_html=True)
@@ -745,6 +745,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
