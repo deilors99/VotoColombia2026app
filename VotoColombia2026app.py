@@ -488,7 +488,7 @@ st.markdown("""
 st.markdown(""" 
 <div class="background-carousel">
  <img src="https://upload.wikimedia.org/wikipedia/commons/8/88/Presidente_Gustavo_Petro.jpg">
- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwQ4b8jRvcOjl29nseUr6kETF1vElBgVfwZg&s">
+ <img src="https://static4.depositphotos.com/1007566/491/i/450/depositphotos_4914447-stock-photo-colombia-flag.jpg">
  <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620">
  </div> """, unsafe_allow_html=True)
 
@@ -957,6 +957,7 @@ st.markdown("""
     <p style="text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);"><b> Encuesta no oficial • Consulta fuentes oficiales arriba</b></p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
