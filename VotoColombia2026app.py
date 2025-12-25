@@ -186,9 +186,9 @@ st.markdown("""
 
 st.markdown("""
 <div class="background-carousel">
-<img src="imagenes/fondo1.jpg">
-<img src="imagenes/fondo2.jpg">
-<img src="imagenes/fondo3.jpg">
+    <img src="https://www.presidencia.gov.co/prensa/galerias/Paginas/Galeria-Desfile-de-la-Independencia-Nacional-OrgulloColombiano-240720.aspx">
+    <img src="https://images.unsplash.com/photo-1541873676-a18131494184">
+    <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620">
 </div>
 """, unsafe_allow_html=True)
 
@@ -407,13 +407,8 @@ if st.session_state.datos_votos.empty:
                 background: rgba(255, 50, 50, 1);
                 transform: scale(1.1) rotate(90deg);
             }
-       st.markdown("""
-<div class="background-carousel">
-    <img src="imagenes/fondo1.jpg">
-    <img src="imagenes/fondo2.jpg">
-    <img src="imagenes/fondo3.jpg">
-</div>
-""", unsafe_allow_html=True)
+        </style>
+        """, unsafe_allow_html=True)
         
         # Contenedor del modal
         modal_container = st.container()
@@ -750,17 +745,3 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
