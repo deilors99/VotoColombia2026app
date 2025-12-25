@@ -1,5 +1,3 @@
-CODIGO BASE "VOTOCOLOMBIA2026"
-
 # ============================================
 # VOTO COLOMBIA 2026 - Sistema de Encuesta Electoral
 # Creador: Deiber Yesid López Ramírez
@@ -705,3 +703,4 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
