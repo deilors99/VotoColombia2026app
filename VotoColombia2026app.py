@@ -186,7 +186,7 @@ st.markdown("""
 
 st.markdown("""
 <div class="background-carousel">
-    <img src="https://www.presidencia.gov.co/prensa/galerias/Paginas/Galeria-Desfile-de-la-Independencia-Nacional-OrgulloColombiano-240720.aspx">
+    <img src="https://www.presidencia.gov.co/GALMULTIMEDIAACTIVOS/240720-02-DESFILE-MILITAR-20-DE-JULIO-1280.JPG">
     <img src="https://images.unsplash.com/photo-1541873676-a18131494184">
     <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620">
 </div>
@@ -745,3 +745,4 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
