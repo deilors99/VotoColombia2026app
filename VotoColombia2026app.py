@@ -216,9 +216,11 @@ def generar_hash(cedula):
 # HEADER
 st.title("🇨🇴 Elecciones Colombia 2026")
 st.markdown("### Encuesta Electoral Segura")
-st.markdown("**1 Cual es el candidato presidencial de su eleccion favorita
-2 Vote si hipoteticamente GUSTAVO PETRO fuera candidato electo, nos gustaria saber quienes apoyan a el actual pesidente para un proximo periodo
-3 Esta encuesta NO ES OFICIAL pero gracias a estos datos podemos cambiar el futuro de nuestro pais**")
+st.markdown("""
+**1️⃣ ¿Cuál es el candidato presidencial de su elección favorita?  
+2️⃣ Vote si hipotéticamente Gustavo Petro fuera candidato electo.  
+3️⃣ Esta encuesta NO ES OFICIAL y tiene fines académicos y estadísticos.**
+""")
 st.markdown("---")
 
 # Enlaces Oficiales
@@ -748,6 +750,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
