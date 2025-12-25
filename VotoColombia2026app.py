@@ -214,9 +214,9 @@ def generar_hash(cedula):
     return hashlib.sha256(cedula.encode()).hexdigest()[:16]
 
 # HEADER
-st.title("🇨🇴 Elecciones en Colombia 2026")
+st.title("🇨🇴 Elecciones Colombia 2026")
 st.markdown("### Encuesta Electoral Segura")
-st.markdown("**Creador: Deiber Yesid López Ramírez - Data Analyst**")
+st.markdown("**vote si hipoteticamente GUSTAVO PETRO fuera candidato electo, nos gustaria saber quienes apoyan a el actual pesidente para un proximo periodo**")
 st.markdown("---")
 
 # Enlaces Oficiales
@@ -746,6 +746,7 @@ st.markdown("""
     <p>🇨🇴 Encuesta no oficial • Consulta fuentes oficiales arriba</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
